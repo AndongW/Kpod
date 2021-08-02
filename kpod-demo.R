@@ -343,7 +343,14 @@ fit_km1992 <- 1-(sum(km1992$withinss)/km1992$totss)
 kp1992 <- kpodclustr::kpod(Xm1992,5)
 fit_kpod1992 <- kp1992$fit
 
-
+# Scatter plot
+## EX1 small data set
+### original data scatter
+ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2]))+ geom_point()
+### colored by k means
+ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=as.character(km1991$cluster))) + geom_point() + theme(legend.position = "none")
+### colored by k pod
+ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=as.character(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
 
 
 
