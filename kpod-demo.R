@@ -62,13 +62,6 @@ genTestData <- function(p,n,k,sigma,missingpct,seed=1991){ # sigma is standard d
   # [1] 1 3 1 2 3 2 2 2 2 1
 }
 
-#'Examine the generated matrixes for seed 1991
-data1991 <- genTestData (p=2,n=10,k=3,sigma=0.25,missingpct=0.20,seed=1991)
-X1991 <- data1991[[1]]
-Xm1991 <- data1991[[2]]
-B1991 <- data1991[[3]]
-A1991 <- data1991[[4]]
-
 
 findMissing <- function(X){
   # find index of all missing data in data matrix X, and put them in a list
@@ -181,6 +174,8 @@ kmpp <- function(X, k) {
 #'Within-cluster sum of square = sum of distances between obs of one cluster to that cluster center
 #'Between-cluster sum of square = distances between cluster centers
 #'totss = withinss + betweenss
+#'
+#'fit 1-(sum(res$withinss)/res$totss) ; The greater the value(closer to 1), the better the fit
 
 assign_clustpp <- function(X,init_centers,kmpp_flag=TRUE,max_iter=20){
   # Run kmeans on filled matrix with given initial centers
@@ -318,10 +313,37 @@ kpod <- function(X,k,kmpp_flag=TRUE,maxiter=10) {
 
 }
 
+# EX1 small data set
+## Retrieve Data 1991
+data1991 <- genTestData (p=2,n=10,k=3,sigma=0.25,missingpct=0.50,seed=1991)
+X1991 <- data1991[[1]]
+Xm1991 <- data1991[[2]]
+B1991 <- data1991[[3]]
+A1991 <- data1991[[4]]
+## run k-mean on 100% data 1991.
+init_centers1991 <- kpodclustr::kmpp(X1991,3)
+km1991 <- kmeans(X1991,init_centers1991)
+fit_km1991 <- 1-(sum(km1991$withinss)/km1991$totss)
+## run k-pod on 80% data1991.
+kp1991 <- kpodclustr::kpod(Xm1991,3)
+fit_kpod1991 <- kp1991$fit
+
+# Ex2: Larger data set 
+## Retrieve data 1992 (n = 100, k = 5, p = 2)
+data1992 <- genTestData (p=2,n=100,k=5,sigma=0.25,missingpct=0.10,seed=1992)
+X1992 <- data1992[[1]]
+Xm1992 <- data1992[[2]]
+B1992 <- data1992[[3]]
+A1992 <- data1992[[4]]
+## run k-mean on 100% data 1992.
+init_centers1992 <- kpodclustr::kmpp(X1992,5)
+km1992 <- kmeans(X1992,init_centers1992)
+fit_km1992 <- 1-(sum(km1992$withinss)/km1992$totss)
+## run k-pod on 90% data1992.
+kp1992 <- kpodclustr::kpod(Xm1992,5)
+fit_kpod1992 <- kp1992$fit
 
 
-
-# Scatter plot
 
 
 
