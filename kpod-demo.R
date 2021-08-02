@@ -348,10 +348,9 @@ fit_kpod1992 <- kp1992$fit
 ### original data scatter
 ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2]))+ geom_point()
 ### colored by k means
-ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=as.character(km1991$cluster))) + geom_point() + theme(legend.position = "none")
+ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(km1991$cluster))) + geom_point() + theme(legend.position = "none") + geom_point(data = as.data.frame(km1991$centers), mapping = aes(x=km1991$centers[,1],y=km1991$centers[,2], color = "red",size = 3))
 ### colored by k pod
 ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=as.character(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
-
 
 
 # make code k-mean on complete k-pod on missing, and compare result
