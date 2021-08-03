@@ -305,17 +305,17 @@ kpod <- function(X,k,kmpp_flag=TRUE,maxiter=10) {
     
     if (all(cluster_vals[[i]] == cluster_vals[[i-1]])){
       noquote('Clusters have converged.')
-      return(list(cluster=clusts,cluster_list=cluster_vals[1:i],obj_vals=obj_vals[1:i],fit=fit[i],fit_list=fit[1:i]))
+      return(list(cluster=clusts,cluster_list=cluster_vals[1:i],obj_vals=obj_vals[1:i],fit=fit[i],fit_list=fit[1:i],centers=clustMat))
       break
     }
   }
-  return(list(cluster=clusts,cluster_list=cluster_vals[1:i],obj_vals=obj_vals[1:i],fit=fit[i],fit_list=fit[1:i]))
+  return(list(cluster=clusts,cluster_list=cluster_vals[1:i],obj_vals=obj_vals[1:i],fit=fit[i],fit_list=fit[1:i],centers=clustMat))
 
 }
 
 # EX1 small data set
 ## Retrieve Data 1991
-data1991 <- genTestData (p=2,n=10,k=3,sigma=0.25,missingpct=0.50,seed=1991)
+data1991 <- genTestData (p=2,n=10,k=3,sigma=0.25,missingpct=0.90,seed=1991)
 X1991 <- data1991[[1]]
 Xm1991 <- data1991[[2]]
 B1991 <- data1991[[3]]
@@ -327,6 +327,8 @@ fit_km1991 <- 1-(sum(km1991$withinss)/km1991$totss)
 ## run k-pod on 80% data1991.
 kp1991 <- kpodclustr::kpod(Xm1991,3)
 fit_kpod1991 <- kp1991$fit
+## compare clustering using rand.index
+rand1991 <- adj.rand.index(km1991$cluster,kp1991$cluster)
 
 # Ex2: Larger data set 
 ## Retrieve data 1992 (n = 100, k = 5, p = 2)
@@ -350,12 +352,12 @@ ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2]))+ geo
 ### colored by k means
 ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(km1991$cluster))) + geom_point() + theme(legend.position = "none") + geom_point(data = as.data.frame(km1991$centers), mapping = aes(x=km1991$centers[,1],y=km1991$centers[,2], color = "red",size = 3))
 ### colored by k pod
-ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=as.character(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
+ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=as.character(kp1991$cluster))) + geom_point() + theme(legend.position = "none") 
 
 
 # make code k-mean on complete k-pod on missing, and compare result
 # missing fraction 10% - 90% performance comparison between k-mean k-pod
 # RandIndex 
-# ARI adjusted RandIndes assess the similarity between clustrings
+# ARI adjusted RandIndex assess the similarity between clustrings
 # illustrate how to measure similarity between clustrings
 # illustrate it gets harder as missing fraction increase
