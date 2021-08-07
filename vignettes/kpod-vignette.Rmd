@@ -1,19 +1,36 @@
 ---
-title: "kpodcluster R Package Vignette"
+title: "Introduction to kpodcluster"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+One of the most common clustering algorithms used by data scientists today is k-means clustering.  
+When attempting to perform k-means clustering on data sets with missing entries, one faces the following options before proceeding to the clustering:
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+***
+1. eliminate the observations with missing features from the data set, then perform k-means clustering on partial data;
 
-```{r}
-plot(cars)
+2. impute the missing values using certain algorithm, then perform k-means clustering on imputed data;
+
+3. contact the data collecting agency for clarification on the missing values.
+
+***
+
+However, all these options are either computationally expensive, or insufficient in producing the ideal clustering results. The kpodcluster package's k-POD method offers an efficient alternative to resolve the difficulties of applying k-means clustering on incomplete data. *need to sell kpod more here, refer to the paper*
+
+## Example Data
+```{r exampleData}
+library(kpodclustr)
+kpodclustr::makeData(p = 2, n = 10, k = 3, sigma = 0.25, missing = 0.2, seed = 1991)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+*explain data sets that are generated, complete and incomplete.*
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+## Usage of k-POD
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+*explain the returned items when passing the generated incomplete data through kpod()*
+
+## Sufficiency comparison: k-means vs k-pod
+
+*Scatter plots, and rand index*
+
 
