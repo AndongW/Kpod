@@ -1749,23 +1749,25 @@ summary {
 
 
 <!-- rnb-text-begin -->
-<p>One of the most common clustering algorithms used by data scientists today is k-means clustering.<br />
-When attempting to perform k-means clustering on data sets with missing entries, one faces the following options before proceeding to the clustering:</p>
+<hr />
+<p>One of the most common clustering algorithms used by data scientists today is k-means clustering. K-means clustering is an easy-to-follow and fast-to-execute algorithm to fulfill basic clustering needs with a simple function call, <code>kmeans()</code>.</p>
+<p>However, k-means suffers one major drawback: it requires a complete data set without missing entries. Realistically, in many data analysis scenarios, data sets tend to have missing entries due to either insufficient data collection or erroneous data cleaning. When attempting to perform k-means clustering on data sets with missing entries, one faces the following options before proceeding to the clustering:</p>
 <hr />
 <ol style="list-style-type: decimal">
-<li><p>eliminate the observations with missing features from the data set, then perform k-means clustering on partial data;</p></li>
-<li><p>impute the missing values using certain algorithm, then perform k-means clustering on imputed data;</p></li>
+<li><p>eliminate the observations(rows) with missing features(columns) from the data set, then perform k-means clustering on partial data;</p></li>
+<li><p>impute the missing values using a certain algorithm, then perform k-means clustering on imputed data;</p></li>
 <li><p>contact the data collecting agency for clarification on the missing values.</p></li>
 </ol>
 <hr />
-<p>However, all these options are either computationally expensive, or insufficient in producing the ideal clustering results. The kpodcluster package’s k-POD method offers an efficient alternative to resolve the difficulties of applying k-means clustering on incomplete data. <em>need to sell kpod more here, refer to the paper</em></p>
+<p>However, all these options are either computationally expensive, or lacking competence in producing the ideal clustering results. The <code>kpodcluster</code> package’s <code>kpod()</code> offers an efficient alternative to resolve the difficulties of applying k-means clustering on incomplete data.</p>
+<p>In addition to resolving the incomplete data issue, <code>kpod()</code> users have the default option to use the k-means++ algorithm to initialize centers, in order to address the potentially inconsistent clustering results caused by randomized initial centers in k-means clustering.</p>
 <div id="example-data" class="section level2">
 <h2>Example Data</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShrcG9kY2x1c3RyKVxua3BvZGNsdXN0cjo6bWFrZURhdGEocCA9IDIsIG4gPSAxMCwgayA9IDMsIHNpZ21hID0gMC4yNSwgbWlzc2luZyA9IDAuMiwgc2VlZCA9IDE5OTEpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShrcG9kY2x1c3RyKVxudGVzdERhdGEgPC0ga3BvZGNsdXN0cjo6bWFrZURhdGEocCA9IDIsIG4gPSAxMCwgayA9IDMsIHNpZ21hID0gMC4yNSwgbWlzc2luZyA9IDAuMiwgc2VlZCA9IDE5OTEpOyB0ZXN0RGF0YVxuYGBgIn0= -->
 <pre class="r"><code>library(kpodclustr)
-kpodclustr::makeData(p = 2, n = 10, k = 3, sigma = 0.25, missing = 0.2, seed = 1991)</code></pre>
+testData &lt;- kpodclustr::makeData(p = 2, n = 10, k = 3, sigma = 0.25, missing = 0.2, seed = 1991); testData</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiJE9yaWdcbiAgICAgICAgICAgWywxXSAgICAgICAgIFssMl1cbiBbMSxdIC0xLjMwNTA0MSAgMS4yMzE3OTQxMzBcbiBbMixdICAxLjE3NTI4NSAgMC41OTI5MzU3MjZcbiBbMyxdIC0wLjkwMDM2NCAgMC42NzY3OTE3NDZcbiBbNCxdIC0yLjI4NjY3NCAtMC41Mjk1NDI1ODhcbiBbNSxdICAxLjA0NjU5OSAgMC4wODgwMDQ1MDNcbiBbNixdIC0xLjk4MjcyMCAtMC4wMDY5MDIzNDRcbiBbNyxdIC0yLjUzNzYwNSAtMC40MDgwNTYxMDFcbiBbOCxdIC0yLjQwODMwOCAtMC4xNjYxODEzNDNcbiBbOSxdIC0yLjIyMzEyMyAtMC42MTAxNTY0MTFcblsxMCxdIC0xLjIyMDM2NSAgMC45MTE3NzkyNjlcblxuJE1pc3NpbmdcbiAgICAgICAgICAgWywxXSAgICAgICAgIFssMl1cbiBbMSxdIC0xLjMwNTA0MSAgICAgICAgICAgTkFcbiBbMixdICAxLjE3NTI4NSAgMC41OTI5MzU3MjZcbiBbMyxdIC0wLjkwMDM2NCAgMC42NzY3OTE3NDZcbiBbNCxdIC0yLjI4NjY3NCAtMC41Mjk1NDI1ODhcbiBbNSxdICAxLjA0NjU5OSAgMC4wODgwMDQ1MDNcbiBbNixdICAgICAgICBOQSAtMC4wMDY5MDIzNDRcbiBbNyxdICAgICAgICBOQSAtMC40MDgwNTYxMDFcbiBbOCxdIC0yLjQwODMwOCAgICAgICAgICAgTkFcbiBbOSxdIC0yLjIyMzEyMyAtMC42MTAxNTY0MTFcblsxMCxdIC0xLjIyMDM2NSAgMC45MTE3NzkyNjlcblxuJHRydXRoXG4gWzFdIDEgMyAxIDIgMyAyIDIgMiAyIDFcbiJ9 -->
 <pre><code>$Orig
@@ -1803,6 +1805,34 @@ $truth
 </div>
 <div id="usage-of-k-pod" class="section level2">
 <h2>Usage of k-POD</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua3BvZGNsdXN0cjo6a3BvZChYID0gdGVzdERhdGFbWzJdXSwgayA9IDMpXG5gYGAifQ== -->
+<pre class="r"><code>kpodclustr::kpod(X = testData[[2]], k = 3)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiJGNsdXN0ZXJcbiBbMV0gMiAxIDIgMyAxIDIgMiAzIDMgMlxuXG4kY2x1c3Rlcl9saXN0XG4kY2x1c3Rlcl9saXN0W1sxXV1cbiBbMV0gMiAxIDIgMyAxIDIgMiAzIDMgMlxuXG4kY2x1c3Rlcl9saXN0W1syXV1cbiBbMV0gMiAxIDIgMyAxIDIgMiAzIDMgMlxuXG5cbiRvYmpfdmFsc1xuWzFdIDEuNjc0Nzg3IDEuMzk4NzgxXG5cbiRmaXRcblsxXSAwLjkxMzcwODlcblxuJGZpdF9saXN0XG5bMV0gMC44NjQ3Nzc3IDAuOTEzNzA4OVxuIn0= -->
+<pre><code>$cluster
+ [1] 2 1 2 3 1 2 2 3 3 2
+
+$cluster_list
+$cluster_list[[1]]
+ [1] 2 1 2 3 1 2 2 3 3 2
+
+$cluster_list[[2]]
+ [1] 2 1 2 3 1 2 2 3 3 2
+
+
+$obj_vals
+[1] 1.674787 1.398781
+
+$fit
+[1] 0.9137089
+
+$fit_list
+[1] 0.8647777 0.9137089</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <p><em>explain the returned items when passing the generated incomplete data through kpod()</em></p>
 </div>
 <div id="sufficiency-comparison-k-means-vs-k-pod" class="section level2">
@@ -1811,7 +1841,7 @@ $truth
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiSW50cm9kdWN0aW9uIHRvIGtwb2RjbHVzdGVyIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgpPbmUgb2YgdGhlIG1vc3QgY29tbW9uIGNsdXN0ZXJpbmcgYWxnb3JpdGhtcyB1c2VkIGJ5IGRhdGEgc2NpZW50aXN0cyB0b2RheSBpcyBrLW1lYW5zIGNsdXN0ZXJpbmcuICAKV2hlbiBhdHRlbXB0aW5nIHRvIHBlcmZvcm0gay1tZWFucyBjbHVzdGVyaW5nIG9uIGRhdGEgc2V0cyB3aXRoIG1pc3NpbmcgZW50cmllcywgb25lIGZhY2VzIHRoZSBmb2xsb3dpbmcgb3B0aW9ucyBiZWZvcmUgcHJvY2VlZGluZyB0byB0aGUgY2x1c3RlcmluZzoKCioqKgoxLiBlbGltaW5hdGUgdGhlIG9ic2VydmF0aW9ucyB3aXRoIG1pc3NpbmcgZmVhdHVyZXMgZnJvbSB0aGUgZGF0YSBzZXQsIHRoZW4gcGVyZm9ybSBrLW1lYW5zIGNsdXN0ZXJpbmcgb24gcGFydGlhbCBkYXRhOwoKMi4gaW1wdXRlIHRoZSBtaXNzaW5nIHZhbHVlcyB1c2luZyBjZXJ0YWluIGFsZ29yaXRobSwgdGhlbiBwZXJmb3JtIGstbWVhbnMgY2x1c3RlcmluZyBvbiBpbXB1dGVkIGRhdGE7CgozLiBjb250YWN0IHRoZSBkYXRhIGNvbGxlY3RpbmcgYWdlbmN5IGZvciBjbGFyaWZpY2F0aW9uIG9uIHRoZSBtaXNzaW5nIHZhbHVlcy4KCioqKgoKSG93ZXZlciwgYWxsIHRoZXNlIG9wdGlvbnMgYXJlIGVpdGhlciBjb21wdXRhdGlvbmFsbHkgZXhwZW5zaXZlLCBvciBpbnN1ZmZpY2llbnQgaW4gcHJvZHVjaW5nIHRoZSBpZGVhbCBjbHVzdGVyaW5nIHJlc3VsdHMuIFRoZSBrcG9kY2x1c3RlciBwYWNrYWdlJ3Mgay1QT0QgbWV0aG9kIG9mZmVycyBhbiBlZmZpY2llbnQgYWx0ZXJuYXRpdmUgdG8gcmVzb2x2ZSB0aGUgZGlmZmljdWx0aWVzIG9mIGFwcGx5aW5nIGstbWVhbnMgY2x1c3RlcmluZyBvbiBpbmNvbXBsZXRlIGRhdGEuICpuZWVkIHRvIHNlbGwga3BvZCBtb3JlIGhlcmUsIHJlZmVyIHRvIHRoZSBwYXBlcioKCiMjIEV4YW1wbGUgRGF0YQpgYGB7ciBleGFtcGxlRGF0YX0KbGlicmFyeShrcG9kY2x1c3RyKQprcG9kY2x1c3RyOjptYWtlRGF0YShwID0gMiwgbiA9IDEwLCBrID0gMywgc2lnbWEgPSAwLjI1LCBtaXNzaW5nID0gMC4yLCBzZWVkID0gMTk5MSkKYGBgCgoqZXhwbGFpbiBkYXRhIHNldHMgdGhhdCBhcmUgZ2VuZXJhdGVkLCBjb21wbGV0ZSBhbmQgaW5jb21wbGV0ZS4qCgojIyBVc2FnZSBvZiBrLVBPRAoKKmV4cGxhaW4gdGhlIHJldHVybmVkIGl0ZW1zIHdoZW4gcGFzc2luZyB0aGUgZ2VuZXJhdGVkIGluY29tcGxldGUgZGF0YSB0aHJvdWdoIGtwb2QoKSoKCiMjIFN1ZmZpY2llbmN5IGNvbXBhcmlzb246IGstbWVhbnMgdnMgay1wb2QKCipTY2F0dGVyIHBsb3RzLCBhbmQgcmFuZCBpbmRleCoKCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiSW50cm9kdWN0aW9uIHRvIGtwb2RjbHVzdGVyIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCioqKgoKT25lIG9mIHRoZSBtb3N0IGNvbW1vbiBjbHVzdGVyaW5nIGFsZ29yaXRobXMgdXNlZCBieSBkYXRhIHNjaWVudGlzdHMgdG9kYXkgaXMgay1tZWFucyBjbHVzdGVyaW5nLiBLLW1lYW5zIGNsdXN0ZXJpbmcgaXMgYW4gZWFzeS10by1mb2xsb3cgYW5kIGZhc3QtdG8tZXhlY3V0ZSBhbGdvcml0aG0gdG8gZnVsZmlsbCBiYXNpYyBjbHVzdGVyaW5nIG5lZWRzIHdpdGggYSBzaW1wbGUgZnVuY3Rpb24gY2FsbCwgYGttZWFucygpYC4gCgpIb3dldmVyLCBrLW1lYW5zIHN1ZmZlcnMgb25lIG1ham9yIGRyYXdiYWNrOiBpdCByZXF1aXJlcyBhIGNvbXBsZXRlIGRhdGEgc2V0IHdpdGhvdXQgbWlzc2luZyBlbnRyaWVzLiBSZWFsaXN0aWNhbGx5LCBpbiBtYW55IGRhdGEgYW5hbHlzaXMgc2NlbmFyaW9zLCBkYXRhIHNldHMgdGVuZCB0byBoYXZlIG1pc3NpbmcgZW50cmllcyBkdWUgdG8gZWl0aGVyIGluc3VmZmljaWVudCBkYXRhIGNvbGxlY3Rpb24gb3IgZXJyb25lb3VzIGRhdGEgY2xlYW5pbmcuIFdoZW4gYXR0ZW1wdGluZyB0byBwZXJmb3JtIGstbWVhbnMgY2x1c3RlcmluZyBvbiBkYXRhIHNldHMgd2l0aCBtaXNzaW5nIGVudHJpZXMsIG9uZSBmYWNlcyB0aGUgZm9sbG93aW5nIG9wdGlvbnMgYmVmb3JlIHByb2NlZWRpbmcgdG8gdGhlIGNsdXN0ZXJpbmc6CgoqKioKMS4gZWxpbWluYXRlIHRoZSBvYnNlcnZhdGlvbnMocm93cykgd2l0aCBtaXNzaW5nIGZlYXR1cmVzKGNvbHVtbnMpIGZyb20gdGhlIGRhdGEgc2V0LCB0aGVuIHBlcmZvcm0gay1tZWFucyBjbHVzdGVyaW5nIG9uIHBhcnRpYWwgZGF0YTsKCjIuIGltcHV0ZSB0aGUgbWlzc2luZyB2YWx1ZXMgdXNpbmcgYSBjZXJ0YWluIGFsZ29yaXRobSwgdGhlbiBwZXJmb3JtIGstbWVhbnMgY2x1c3RlcmluZyBvbiBpbXB1dGVkIGRhdGE7CgozLiBjb250YWN0IHRoZSBkYXRhIGNvbGxlY3RpbmcgYWdlbmN5IGZvciBjbGFyaWZpY2F0aW9uIG9uIHRoZSBtaXNzaW5nIHZhbHVlcy4KCioqKgoKSG93ZXZlciwgYWxsIHRoZXNlIG9wdGlvbnMgYXJlIGVpdGhlciBjb21wdXRhdGlvbmFsbHkgZXhwZW5zaXZlLCBvciBsYWNraW5nIGNvbXBldGVuY2UgaW4gcHJvZHVjaW5nIHRoZSBpZGVhbCBjbHVzdGVyaW5nIHJlc3VsdHMuIFRoZSBga3BvZGNsdXN0ZXJgIHBhY2thZ2UncyBga3BvZCgpYCBvZmZlcnMgYW4gZWZmaWNpZW50IGFsdGVybmF0aXZlIHRvIHJlc29sdmUgdGhlIGRpZmZpY3VsdGllcyBvZiBhcHBseWluZyBrLW1lYW5zIGNsdXN0ZXJpbmcgb24gaW5jb21wbGV0ZSBkYXRhLiAKCkluIGFkZGl0aW9uIHRvIHJlc29sdmluZyB0aGUgaW5jb21wbGV0ZSBkYXRhIGlzc3VlLCBga3BvZCgpYCB1c2VycyBoYXZlIHRoZSBkZWZhdWx0IG9wdGlvbiB0byB1c2UgdGhlIGstbWVhbnMrKyBhbGdvcml0aG0gdG8gaW5pdGlhbGl6ZSBjZW50ZXJzLCBpbiBvcmRlciB0byBhZGRyZXNzIHRoZSBwb3RlbnRpYWxseSBpbmNvbnNpc3RlbnQgY2x1c3RlcmluZyByZXN1bHRzIGNhdXNlZCBieSByYW5kb21pemVkIGluaXRpYWwgY2VudGVycyBpbiBrLW1lYW5zIGNsdXN0ZXJpbmcuCgojIyBFeGFtcGxlIERhdGEKCmBgYHtyIGV4YW1wbGVEYXRhfQpsaWJyYXJ5KGtwb2RjbHVzdHIpCnRlc3REYXRhIDwtIGtwb2RjbHVzdHI6Om1ha2VEYXRhKHAgPSAyLCBuID0gMTAsIGsgPSAzLCBzaWdtYSA9IDAuMjUsIG1pc3NpbmcgPSAwLjIsIHNlZWQgPSAxOTkxKTsgdGVzdERhdGEKYGBgCgoqZXhwbGFpbiBkYXRhIHNldHMgdGhhdCBhcmUgZ2VuZXJhdGVkLCBjb21wbGV0ZSBhbmQgaW5jb21wbGV0ZS4qCgojIyBVc2FnZSBvZiBrLVBPRAoKYGBge3J9Cmtwb2RjbHVzdHI6Omtwb2QoWCA9IHRlc3REYXRhW1syXV0sIGsgPSAzKQpgYGAKCipleHBsYWluIHRoZSByZXR1cm5lZCBpdGVtcyB3aGVuIHBhc3NpbmcgdGhlIGdlbmVyYXRlZCBpbmNvbXBsZXRlIGRhdGEgdGhyb3VnaCBrcG9kKCkqCgojIyBTdWZmaWNpZW5jeSBjb21wYXJpc29uOiBrLW1lYW5zIHZzIGstcG9kCgoqU2NhdHRlciBwbG90cywgYW5kIHJhbmQgaW5kZXgqCgoK</div>
 
 
 

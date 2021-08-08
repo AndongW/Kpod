@@ -2,30 +2,39 @@
 title: "Introduction to kpodcluster"
 output: html_notebook
 ---
+***
 
-One of the most common clustering algorithms used by data scientists today is k-means clustering.  
-When attempting to perform k-means clustering on data sets with missing entries, one faces the following options before proceeding to the clustering:
+One of the most common clustering algorithms used by data scientists today is k-means clustering. K-means clustering is an easy-to-follow and fast-to-execute algorithm to fulfill basic clustering needs with a simple function call, `kmeans()`. 
+
+However, k-means suffers one major drawback: it requires a complete data set without missing entries. Realistically, in many data analysis scenarios, data sets tend to have missing entries due to either insufficient data collection or erroneous data cleaning. When attempting to perform k-means clustering on data sets with missing entries, one faces the following options before proceeding to the clustering:
 
 ***
-1. eliminate the observations with missing features from the data set, then perform k-means clustering on partial data;
+1. eliminate the observations(rows) with missing features(columns) from the data set, then perform k-means clustering on partial data;
 
-2. impute the missing values using certain algorithm, then perform k-means clustering on imputed data;
+2. impute the missing values using a certain algorithm, then perform k-means clustering on imputed data;
 
 3. contact the data collecting agency for clarification on the missing values.
 
 ***
 
-However, all these options are either computationally expensive, or insufficient in producing the ideal clustering results. The kpodcluster package's k-POD method offers an efficient alternative to resolve the difficulties of applying k-means clustering on incomplete data. *need to sell kpod more here, refer to the paper*
+However, all these options are either computationally expensive, or lacking competence in producing the ideal clustering results. The `kpodcluster` package's `kpod()` offers an efficient alternative to resolve the difficulties of applying k-means clustering on incomplete data. 
+
+In addition to resolving the incomplete data issue, `kpod()` users have the default option to use the k-means++ algorithm to initialize centers, in order to address the potentially inconsistent clustering results caused by randomized initial centers in k-means clustering.
 
 ## Example Data
+
 ```{r exampleData}
 library(kpodclustr)
-kpodclustr::makeData(p = 2, n = 10, k = 3, sigma = 0.25, missing = 0.2, seed = 1991)
+testData <- kpodclustr::makeData(p = 2, n = 10, k = 3, sigma = 0.25, missing = 0.2, seed = 1991); testData
 ```
 
 *explain data sets that are generated, complete and incomplete.*
 
 ## Usage of k-POD
+
+```{r}
+kpodclustr::kpod(X = testData[[2]], k = 3)
+```
 
 *explain the returned items when passing the generated incomplete data through kpod()*
 
