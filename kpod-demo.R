@@ -1,3 +1,16 @@
+#' kpodclustr demonstration
+#' 
+#' This file includes:
+#'   - comments for all functions in kpodclustr;
+#'   - example output and explanation for each function;
+#'   - code to assist making of the vignette for the kpodclustr package.
+#'   
+#' This file serves the purpose of:
+#'   - increase understanding of the purpose of kpodcluster;
+#'   - familiarize with the inner-workings of each function/each step of kpod;
+#'   - assist making of the vignette for the kpodclustr package.
+
+
 #' Generate Test Data: complete and noisy
 #' @param p number of features for each observation
 #' @param n number of observation
