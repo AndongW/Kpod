@@ -2,11 +2,14 @@
 title: "Introduction to kpodcluster"
 output: html_notebook
 ---
-***
+
+# {.tabset .tabset-pills}
+
+## Foreword
 
 One of the most common clustering algorithms used by data scientists today is k-means clustering. K-means clustering is an easy-to-follow and fast-to-execute algorithm to fulfill basic clustering needs with a simple function call, `kmeans()`. 
 
-However, k-means suffers one major drawback: it requires a complete data set without missing entries. Realistically, in many data analysis scenarios, data sets tend to have missing entries due to either insufficient data collection or erroneous data cleaning. When attempting to perform k-means clustering on data sets with missing entries, one faces the following options before proceeding to the clustering:
+However, k-means suffers one major __drawback__: it requires a complete data set without missing entries. Realistically, in many data analysis scenarios, data sets tend to have missing entries due to errors in data collection or data cleaning. When attempting to perform k-means clustering on data sets with missing entries, one faces the following options before proceeding to the clustering:
 
 ***
 1. eliminate the observations(rows) with missing features(columns) from the data set, then perform k-means clustering on partial data;
@@ -22,6 +25,8 @@ However, all these options are either computationally expensive, or lacking comp
 In addition to resolving the incomplete data issue, `kpod()` users have the default option to use the k-means++ algorithm to initialize centers, in order to address the potentially inconsistent clustering results caused by randomized initial centers in k-means clustering.
 
 ## Example Data
+
+### makeData()
 
 `kpodclustr` includes a `makeData()` function that generates data sets with missing entries under user's customization. It produces a list object consisting of 3 objects:
 
@@ -42,26 +47,54 @@ library(kpodclustr)
 testData <- kpodclustr::makeData(p = 2, n = 10, k = 3, sigma = 0.25, missing = 0.2, seed = 1991); testData
 ```
 
-When generating these example data, we used the following values for parameters: 
+### Parameters for this specific example: 
 
 ***
 
-k = 3 (centroids) 
+- n = 10 (10 observations)
 
-n = 10 (observations)
+- p = 2 (each observation has 2 features)
 
-p = 2 (features) standard deviation 
+- k = 3 (3 clusters, 3 centroids) 
 
-sigma = 0.25 (standard deviation), and 4 missing entries, missingpct = 0.2 -- seed = 1991:
+- sigma = 0.25 (factor of variance for noise around the centroids) 
+
+- missing = 0.2 (missingness, or percentage of missing entries. 10 * 2 * 0.2 = 4 missing entries)
+
+- seed = 1991 (random seed for reproducibility)
 
 ***
 
-## Usage of k-POD
+### Process of `makeData()`:
+
+***
+
+1. Generate centroid matrix, `M`, with `k`*`p` random samples from standard normal distribution.
+
+2. Generate assignment matrix, `assignment`, with `n` ramdom samples from 1 to `k` with replacement.
+
+3. Initialize complete data matrix, `X`, using `M` and `assignment`, so that each observation of `X` has the same features as its assigned cluster centroid.
+
+4. Add noise to each value in the initialized `X` with standard normal distribution multiplying a deviation factor of `sigma`. 
+
+5. Initialize incomplete data matrix, `X_missing`, as a copy of `X`.
+
+6. Generate indices of missing entries, `missing_ix`, with `n`\*`p`\*`missing` random samples from 1 to `n`\*`p` without replacement.
+
+7. Replace values in `X_missing` at `missing_ix` indices with `NA`.
+
+8. Return `X`, `X_missing`, and `assignment`.
+
+***
+
+## Usage of k-POD {.tabset}
+
 
 Using the 
 ```{r}
 kpodclustr::kpod(X = testData[[2]], k = 3)
 ```
+
 
 *explain the returned items when passing the generated incomplete data through kpod()*
 
