@@ -1751,10 +1751,12 @@ summary {
 <!-- rnb-text-begin -->
 <div id="section" class="section level1 tabset tabset-pills">
 <h1></h1>
-<div id="foreword" class="section level2">
-<h2>Foreword</h2>
+<div id="why-k-pod" class="section level2">
+<h2>Why k-POD?</h2>
+<div id="k-means-drawback" class="section level3">
+<h3>K-means drawback</h3>
 <p>One of the most common clustering algorithms used by data scientists today is k-means clustering. K-means clustering is an easy-to-follow and fast-to-execute algorithm to fulfill basic clustering needs with a simple function call, <code>kmeans()</code>.</p>
-<p>However, k-means suffers one major <strong>drawback</strong>: it requires a complete data set without missing entries. Realistically, in many data analysis scenarios, data sets tend to have missing entries due to errors in data collection or data cleaning. When attempting to perform k-means clustering on data sets with missing entries, one faces the following options before proceeding to the clustering:</p>
+<p>However, k-means suffers one major drawback : it requires a <strong>complete</strong> data set without missing entries. Realistically, in many data analysis scenarios, data sets tend to have missing entries due to errors in data collection or data cleaning. When attempting to perform k-means clustering on data sets with missing entries, one faces the following options before proceeding to the clustering:</p>
 <hr />
 <ol style="list-style-type: decimal">
 <li><p>eliminate the observations(rows) with missing features(columns) from the data set, then perform k-means clustering on partial data;</p></li>
@@ -1762,8 +1764,12 @@ summary {
 <li><p>contact the data collecting agency for clarification on the missing values.</p></li>
 </ol>
 <hr />
-<p>However, all these options are either computationally expensive, or lacking competence in producing the ideal clustering results. The <code>kpodcluster</code> package’s <code>kpod()</code> offers an efficient alternative to resolve the difficulties of applying k-means clustering on incomplete data.</p>
-<p>In addition to resolving the incomplete data issue, <code>kpod()</code> users have the default option to use the k-means++ algorithm to initialize centers, in order to address the potentially inconsistent clustering results caused by randomized initial centers in k-means clustering.</p>
+</div>
+<div id="k-pod-prevails" class="section level3">
+<h3>K-POD prevails</h3>
+<p>All these options are either computationally expensive, or lacking competence in producing the ideal clustering results. The <code>kpodcluster</code> package’s <code>kpod()</code> offers an efficient alternative to resolve the difficulties of applying k-means clustering on <strong>incomplete</strong> data.</p>
+<p>In addition to resolving the incomplete data issue, <code>kpod()</code> users have the default option to use the <strong>k-means++</strong> algorithm to initialize centers, in order to address the potentially inconsistent clustering results caused by randomized initial centers in k-means clustering.</p>
+</div>
 </div>
 <div id="example-data" class="section level2">
 <h2>Example Data</h2>
@@ -1780,39 +1786,59 @@ summary {
 <p>For the remainder of the demonstration of <code>kpodcluster</code>, we will use the example data generated from the following code.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShrcG9kY2x1c3RyKVxudGVzdERhdGEgPC0ga3BvZGNsdXN0cjo6bWFrZURhdGEocCA9IDIsIG4gPSAxMCwgayA9IDMsIHNpZ21hID0gMC4yNSwgbWlzc2luZyA9IDAuMiwgc2VlZCA9IDE5OTEpOyB0ZXN0RGF0YVxuYGBgIn0= -->
-<pre class="r"><code>library(kpodclustr)
-testData &lt;- kpodclustr::makeData(p = 2, n = 10, k = 3, sigma = 0.25, missing = 0.2, seed = 1991); testData</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGVzdERhdGEgPC0ga3BvZGNsdXN0cjo6bWFrZURhdGEocCA9IDIsIG4gPSAyMCwgayA9IDUsIHNpZ21hID0gMC4yNSwgbWlzc2luZyA9IDAuMywgc2VlZCA9IDE5OTEpOyB0ZXN0RGF0YVxuXG5gYGAifQ== -->
+<pre class="r"><code>testData &lt;- kpodclustr::makeData(p = 2, n = 20, k = 5, sigma = 0.25, missing = 0.3, seed = 1991); testData
+</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiJE9yaWdcbiAgICAgICAgICAgWywxXSAgICAgICAgIFssMl1cbiBbMSxdIC0xLjMwNTA0MSAgMS4yMzE3OTQxMzBcbiBbMixdICAxLjE3NTI4NSAgMC41OTI5MzU3MjZcbiBbMyxdIC0wLjkwMDM2NCAgMC42NzY3OTE3NDZcbiBbNCxdIC0yLjI4NjY3NCAtMC41Mjk1NDI1ODhcbiBbNSxdICAxLjA0NjU5OSAgMC4wODgwMDQ1MDNcbiBbNixdIC0xLjk4MjcyMCAtMC4wMDY5MDIzNDRcbiBbNyxdIC0yLjUzNzYwNSAtMC40MDgwNTYxMDFcbiBbOCxdIC0yLjQwODMwOCAtMC4xNjYxODEzNDNcbiBbOSxdIC0yLjIyMzEyMyAtMC42MTAxNTY0MTFcblsxMCxdIC0xLjIyMDM2NSAgMC45MTE3NzkyNjlcblxuJE1pc3NpbmdcbiAgICAgICAgICAgWywxXSAgICAgICAgIFssMl1cbiBbMSxdIC0xLjMwNTA0MSAgICAgICAgICAgTkFcbiBbMixdICAxLjE3NTI4NSAgMC41OTI5MzU3MjZcbiBbMyxdIC0wLjkwMDM2NCAgMC42NzY3OTE3NDZcbiBbNCxdIC0yLjI4NjY3NCAtMC41Mjk1NDI1ODhcbiBbNSxdICAxLjA0NjU5OSAgMC4wODgwMDQ1MDNcbiBbNixdICAgICAgICBOQSAtMC4wMDY5MDIzNDRcbiBbNyxdICAgICAgICBOQSAtMC40MDgwNTYxMDFcbiBbOCxdIC0yLjQwODMwOCAgICAgICAgICAgTkFcbiBbOSxdIC0yLjIyMzEyMyAtMC42MTAxNTY0MTFcblsxMCxdIC0xLjIyMDM2NSAgMC45MTE3NzkyNjlcblxuJHRydXRoXG4gWzFdIDEgMyAxIDIgMyAyIDIgMiAyIDFcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiJE9yaWdcbiAgICAgICAgICAgICBbLDFdICAgICAgICBbLDJdXG4gWzEsXSAgMC40ODEzMTU5NSAgMi4wNzI0MTU4OFxuIFsyLF0gIDEuMjUxNTc4NzIgIDIuMzkyMzIyNjNcbiBbMyxdIC0yLjEwODAwNzk0IC0yLjY3MTM0NDkyXG4gWzQsXSAtMC45MDc3MjI5OCAgMC4wODc2NTIyNVxuIFs1LF0gLTEuNzQyMzQ5NTIgLTIuNDcwMzYzODFcbiBbNixdICAxLjAyMjUyMDcyICAxLjYxMTU2OTQ3XG4gWzcsXSAgMC45NjQyOTQwNCAtMC4wNTU1NjcxM1xuIFs4LF0gLTAuMDk3OTkxMzIgIDEuNjI4MjU1NzdcbiBbOSxdIC0yLjAyNzIyNzgwIC0yLjc3OTI4MTUyXG5bMTAsXSAgMS40NTkwOTI4NCAgMi4yNjQzOTE3N1xuWzExLF0gIDAuNTcyOTIxMzUgIDEuNTk5MTUxODdcblsxMixdICAwLjUwNzMwNDg4ICAxLjU4NzczODgwXG5bMTMsXSAgMC42NzY3NjMyMiAtMC4zODc3MjM4NlxuWzE0LF0gLTIuNTg1OTAyMzYgLTIuODM2NDY1MzJcblsxNSxdIC0yLjQ3MjU1NzM1IC0zLjI2NDI4NTA0XG5bMTYsXSAgMC44MTgwNDMxMiAgMS44MDM4Mzc5M1xuWzE3LF0gIDAuMDMxOTM4NzkgIDAuODcxNTc3OTNcblsxOCxdIC0wLjcwNTk4Mjk1ICAwLjg5NDU1MDgwXG5bMTksXSAtMC44ODUyNDQ3NCAgMC4xODgyNDY1OFxuWzIwLF0gIDEuMTgyNDE2MjMgIDIuNjMzMjM0MTBcblxuJE1pc3NpbmdcbiAgICAgICAgICAgICBbLDFdICAgICAgICBbLDJdXG4gWzEsXSAgICAgICAgICBOQSAgMi4wNzI0MTU4OFxuIFsyLF0gIDEuMjUxNTc4NzIgIDIuMzkyMzIyNjNcbiBbMyxdICAgICAgICAgIE5BIC0yLjY3MTM0NDkyXG4gWzQsXSAgICAgICAgICBOQSAgMC4wODc2NTIyNVxuIFs1LF0gLTEuNzQyMzQ5NTIgLTIuNDcwMzYzODFcbiBbNixdICAxLjAyMjUyMDcyICAxLjYxMTU2OTQ3XG4gWzcsXSAgICAgICAgICBOQSAtMC4wNTU1NjcxM1xuIFs4LF0gLTAuMDk3OTkxMzIgICAgICAgICAgTkFcbiBbOSxdIC0yLjAyNzIyNzgwICAgICAgICAgIE5BXG5bMTAsXSAgMS40NTkwOTI4NCAgMi4yNjQzOTE3N1xuWzExLF0gIDAuNTcyOTIxMzUgIDEuNTk5MTUxODdcblsxMixdICAwLjUwNzMwNDg4ICAxLjU4NzczODgwXG5bMTMsXSAgICAgICAgICBOQSAtMC4zODc3MjM4NlxuWzE0LF0gICAgICAgICAgTkEgLTIuODM2NDY1MzJcblsxNSxdIC0yLjQ3MjU1NzM1IC0zLjI2NDI4NTA0XG5bMTYsXSAgMC44MTgwNDMxMiAgMS44MDM4Mzc5M1xuWzE3LF0gICAgICAgICAgTkEgIDAuODcxNTc3OTNcblsxOCxdIC0wLjcwNTk4Mjk1ICAwLjg5NDU1MDgwXG5bMTksXSAgICAgICAgICBOQSAgMC4xODgyNDY1OFxuWzIwLF0gIDEuMTgyNDE2MjMgICAgICAgICAgTkFcblxuJHRydXRoXG4gWzFdIDQgNCAyIDEgMiA0IDMgNSAyIDQgNCA0IDMgMiAyIDQgNSA1IDEgNFxuIn0= -->
 <pre><code>$Orig
-           [,1]         [,2]
- [1,] -1.305041  1.231794130
- [2,]  1.175285  0.592935726
- [3,] -0.900364  0.676791746
- [4,] -2.286674 -0.529542588
- [5,]  1.046599  0.088004503
- [6,] -1.982720 -0.006902344
- [7,] -2.537605 -0.408056101
- [8,] -2.408308 -0.166181343
- [9,] -2.223123 -0.610156411
-[10,] -1.220365  0.911779269
+             [,1]        [,2]
+ [1,]  0.48131595  2.07241588
+ [2,]  1.25157872  2.39232263
+ [3,] -2.10800794 -2.67134492
+ [4,] -0.90772298  0.08765225
+ [5,] -1.74234952 -2.47036381
+ [6,]  1.02252072  1.61156947
+ [7,]  0.96429404 -0.05556713
+ [8,] -0.09799132  1.62825577
+ [9,] -2.02722780 -2.77928152
+[10,]  1.45909284  2.26439177
+[11,]  0.57292135  1.59915187
+[12,]  0.50730488  1.58773880
+[13,]  0.67676322 -0.38772386
+[14,] -2.58590236 -2.83646532
+[15,] -2.47255735 -3.26428504
+[16,]  0.81804312  1.80383793
+[17,]  0.03193879  0.87157793
+[18,] -0.70598295  0.89455080
+[19,] -0.88524474  0.18824658
+[20,]  1.18241623  2.63323410
 
 $Missing
-           [,1]         [,2]
- [1,] -1.305041           NA
- [2,]  1.175285  0.592935726
- [3,] -0.900364  0.676791746
- [4,] -2.286674 -0.529542588
- [5,]  1.046599  0.088004503
- [6,]        NA -0.006902344
- [7,]        NA -0.408056101
- [8,] -2.408308           NA
- [9,] -2.223123 -0.610156411
-[10,] -1.220365  0.911779269
+             [,1]        [,2]
+ [1,]          NA  2.07241588
+ [2,]  1.25157872  2.39232263
+ [3,]          NA -2.67134492
+ [4,]          NA  0.08765225
+ [5,] -1.74234952 -2.47036381
+ [6,]  1.02252072  1.61156947
+ [7,]          NA -0.05556713
+ [8,] -0.09799132          NA
+ [9,] -2.02722780          NA
+[10,]  1.45909284  2.26439177
+[11,]  0.57292135  1.59915187
+[12,]  0.50730488  1.58773880
+[13,]          NA -0.38772386
+[14,]          NA -2.83646532
+[15,] -2.47255735 -3.26428504
+[16,]  0.81804312  1.80383793
+[17,]          NA  0.87157793
+[18,] -0.70598295  0.89455080
+[19,]          NA  0.18824658
+[20,]  1.18241623          NA
 
 $truth
- [1] 1 3 1 2 3 2 2 2 2 1</code></pre>
+ [1] 4 4 2 1 2 4 3 5 2 4 4 4 3 2 2 4 5 5 1 4</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1821,11 +1847,11 @@ $truth
 <h3>Parameters for this specific example:</h3>
 <hr />
 <ul>
-<li><p>n = 10 (10 observations)</p></li>
+<li><p>n = 20 (20 observations)</p></li>
 <li><p>p = 2 (each observation has 2 features)</p></li>
-<li><p>k = 3 (3 clusters, 3 centroids)</p></li>
+<li><p>k = 5 (5 clusters, 5 centroids)</p></li>
 <li><p>sigma = 0.25 (factor of variance for noise around the centroids)</p></li>
-<li><p>missing = 0.2 (missingness, or percentage of missing entries. 10 * 2 * 0.2 = 4 missing entries)</p></li>
+<li><p>missing = 0.3 (missingness, or percentage of missing entries. 20 * 2 * 0.3 = 12 missing entries)</p></li>
 <li><p>seed = 1991 (random seed for reproducibility)</p></li>
 </ul>
 <hr />
@@ -1846,47 +1872,68 @@ $truth
 <hr />
 </div>
 </div>
-<div id="usage-of-k-pod" class="section level2 tabset">
+<div id="usage-of-k-pod" class="section level2">
 <h2>Usage of k-POD</h2>
-<p>Using the</p>
+<div id="usage-of-k-pod-1" class="section level3">
+<h3>Usage of k-POD</h3>
+<p>The <strong>key function</strong> in <code>kpodclustr</code> is <code>kpod()</code>. <code>kpod()</code> delegates to the rest of the functions in <code>kpodclustr</code>. Like <code>kmeans()</code>, <code>kpod()</code> has a data set parameter, and a number-of-clusters parameter. The difference is that <code>kpod()</code> takes in a incomplete data set. The following code and output displays the usage of <code>kpod()</code> on the second object in the Example Data list, <code>X_missing</code>.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua3BvZGNsdXN0cjo6a3BvZChYID0gdGVzdERhdGFbWzJdXSwgayA9IDMpXG5gYGAifQ== -->
-<pre class="r"><code>kpodclustr::kpod(X = testData[[2]], k = 3)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua3BvZGNsdXN0cjo6a3BvZChYID0gdGVzdERhdGFbWzJdXSwgayA9IDUpXG5cbmBgYCJ9 -->
+<pre class="r"><code>kpodclustr::kpod(X = testData[[2]], k = 5)
+</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiJGNsdXN0ZXJcbiBbMV0gMiAxIDIgMyAxIDIgMiAzIDMgMlxuXG4kY2x1c3Rlcl9saXN0XG4kY2x1c3Rlcl9saXN0W1sxXV1cbiBbMV0gMiAxIDIgMyAxIDIgMiAzIDMgMlxuXG4kY2x1c3Rlcl9saXN0W1syXV1cbiBbMV0gMiAxIDIgMyAxIDIgMiAzIDMgMlxuXG5cbiRvYmpfdmFsc1xuWzFdIDEuNjc0Nzg3IDEuMzk4NzgxXG5cbiRmaXRcblsxXSAwLjkxMzcwODlcblxuJGZpdF9saXN0XG5bMV0gMC44NjQ3Nzc3IDAuOTEzNzA4OVxuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiJGNsdXN0ZXJcbiBbMV0gMiA1IDEgMyAxIDIgMyAzIDQgNSAyIDIgMyAxIDEgMiAzIDQgMyAzXG5cbiRjbHVzdGVyX2xpc3RcbiRjbHVzdGVyX2xpc3RbWzFdXVxuIFsxXSAyIDUgMSAzIDEgNSAzIDMgNCA1IDIgMiAzIDEgMSA1IDIgNCAzIDNcblxuJGNsdXN0ZXJfbGlzdFtbMl1dXG4gWzFdIDIgNSAxIDMgMSAyIDMgMyA0IDUgMiAyIDMgMSAxIDIgMyA0IDMgM1xuXG4kY2x1c3Rlcl9saXN0W1szXV1cbiBbMV0gMiA1IDEgMyAxIDIgMyAzIDQgNSAyIDIgMyAxIDEgMiAzIDQgMyAzXG5cblxuJG9ial92YWxzXG5bMV0gNi43NjAzMjcgNC4yOTIyMzAgMy43MzI0MzRcblxuJGZpdFxuWzFdIDAuOTU0NTUyNVxuXG4kZml0X2xpc3RcblsxXSAwLjg4MDYwNTAgMC45MzgzMzk5IDAuOTU0NTUyNVxuIn0= -->
 <pre><code>$cluster
- [1] 2 1 2 3 1 2 2 3 3 2
+ [1] 2 5 1 3 1 2 3 3 4 5 2 2 3 1 1 2 3 4 3 3
 
 $cluster_list
 $cluster_list[[1]]
- [1] 2 1 2 3 1 2 2 3 3 2
+ [1] 2 5 1 3 1 5 3 3 4 5 2 2 3 1 1 5 2 4 3 3
 
 $cluster_list[[2]]
- [1] 2 1 2 3 1 2 2 3 3 2
+ [1] 2 5 1 3 1 2 3 3 4 5 2 2 3 1 1 2 3 4 3 3
+
+$cluster_list[[3]]
+ [1] 2 5 1 3 1 2 3 3 4 5 2 2 3 1 1 2 3 4 3 3
 
 
 $obj_vals
-[1] 1.674787 1.398781
+[1] 6.760327 4.292230 3.732434
 
 $fit
-[1] 0.9137089
+[1] 0.9545525
 
 $fit_list
-[1] 0.8647777 0.9137089</code></pre>
+[1] 0.8806050 0.9383399 0.9545525</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p><em>explain the returned items when passing the generated incomplete data through kpod()</em></p>
 </div>
-<div id="sufficiency-comparison-k-means-vs-k-pod" class="section level2">
-<h2>Sufficiency comparison: k-means vs k-pod</h2>
+<div id="returned-items-explained" class="section level3">
+<h3>Returned items explained</h3>
+<hr />
+<ul>
+<li><p>“cluster” : The <strong>final</strong> cluster assignment matrix containing a sequence of cluster labels corresponding to each observation.</p></li>
+<li><p>“cluster_list” : A list of cluster assignment matrices throughout all iterations until clustering converges or <code>kpod()</code> reaches maximum iterations. If clustering converges, the last two cluster assignment matrices should be the same. <code>cluster</code> is the last object in <code>cluster_list</code>.</p></li>
+<li><p>“obj_vals” : The calculated value of the k-means objective function throughout iterations. The k-means objective function measures the intra-cluster variance, the sum of squared distance between each observation and its cluster center. K-means aims to minimize this intra-cluster variance. As shown in the example output, the objective function value decreases as k-POD clustering progresses.</p></li>
+<li><p>“fit” : The <strong>final</strong> measurement of fit of cluster assignment after clustering commences. The closer the fit is to 1, the better the fit. The fit equation is explained below this section.</p></li>
+<li><p>“fit_list” : A list of measurement of fit of cluster assignment throughout all iterations until clustering converges or <code>kpod()</code> reaches maximum iterations. <code>fit</code> is the last object in <code>fit_list</code>. As shown in the example output, the fit increases and approaches 1 as k-POD clustering progresses.</p></li>
+</ul>
+<hr />
+</div>
+<div id="the-fit-equation" class="section level3">
+<h3>The “fit” equation</h3>
+</div>
+</div>
+<div id="k-means-vs-k-pod" class="section level2">
+<h2>k-means vs k-pod</h2>
 <p><em>Scatter plots, and rand index</em></p>
 <!-- rnb-text-end -->
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiSW50cm9kdWN0aW9uIHRvIGtwb2RjbHVzdGVyIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIHsudGFic2V0IC50YWJzZXQtcGlsbHN9CgojIyBGb3Jld29yZAoKT25lIG9mIHRoZSBtb3N0IGNvbW1vbiBjbHVzdGVyaW5nIGFsZ29yaXRobXMgdXNlZCBieSBkYXRhIHNjaWVudGlzdHMgdG9kYXkgaXMgay1tZWFucyBjbHVzdGVyaW5nLiBLLW1lYW5zIGNsdXN0ZXJpbmcgaXMgYW4gZWFzeS10by1mb2xsb3cgYW5kIGZhc3QtdG8tZXhlY3V0ZSBhbGdvcml0aG0gdG8gZnVsZmlsbCBiYXNpYyBjbHVzdGVyaW5nIG5lZWRzIHdpdGggYSBzaW1wbGUgZnVuY3Rpb24gY2FsbCwgYGttZWFucygpYC4gCgpIb3dldmVyLCBrLW1lYW5zIHN1ZmZlcnMgb25lIG1ham9yIF9fZHJhd2JhY2tfXzogaXQgcmVxdWlyZXMgYSBjb21wbGV0ZSBkYXRhIHNldCB3aXRob3V0IG1pc3NpbmcgZW50cmllcy4gUmVhbGlzdGljYWxseSwgaW4gbWFueSBkYXRhIGFuYWx5c2lzIHNjZW5hcmlvcywgZGF0YSBzZXRzIHRlbmQgdG8gaGF2ZSBtaXNzaW5nIGVudHJpZXMgZHVlIHRvIGVycm9ycyBpbiBkYXRhIGNvbGxlY3Rpb24gb3IgZGF0YSBjbGVhbmluZy4gV2hlbiBhdHRlbXB0aW5nIHRvIHBlcmZvcm0gay1tZWFucyBjbHVzdGVyaW5nIG9uIGRhdGEgc2V0cyB3aXRoIG1pc3NpbmcgZW50cmllcywgb25lIGZhY2VzIHRoZSBmb2xsb3dpbmcgb3B0aW9ucyBiZWZvcmUgcHJvY2VlZGluZyB0byB0aGUgY2x1c3RlcmluZzoKCioqKgoxLiBlbGltaW5hdGUgdGhlIG9ic2VydmF0aW9ucyhyb3dzKSB3aXRoIG1pc3NpbmcgZmVhdHVyZXMoY29sdW1ucykgZnJvbSB0aGUgZGF0YSBzZXQsIHRoZW4gcGVyZm9ybSBrLW1lYW5zIGNsdXN0ZXJpbmcgb24gcGFydGlhbCBkYXRhOwoKMi4gaW1wdXRlIHRoZSBtaXNzaW5nIHZhbHVlcyB1c2luZyBhIGNlcnRhaW4gYWxnb3JpdGhtLCB0aGVuIHBlcmZvcm0gay1tZWFucyBjbHVzdGVyaW5nIG9uIGltcHV0ZWQgZGF0YTsKCjMuIGNvbnRhY3QgdGhlIGRhdGEgY29sbGVjdGluZyBhZ2VuY3kgZm9yIGNsYXJpZmljYXRpb24gb24gdGhlIG1pc3NpbmcgdmFsdWVzLgoKKioqCgpIb3dldmVyLCBhbGwgdGhlc2Ugb3B0aW9ucyBhcmUgZWl0aGVyIGNvbXB1dGF0aW9uYWxseSBleHBlbnNpdmUsIG9yIGxhY2tpbmcgY29tcGV0ZW5jZSBpbiBwcm9kdWNpbmcgdGhlIGlkZWFsIGNsdXN0ZXJpbmcgcmVzdWx0cy4gVGhlIGBrcG9kY2x1c3RlcmAgcGFja2FnZSdzIGBrcG9kKClgIG9mZmVycyBhbiBlZmZpY2llbnQgYWx0ZXJuYXRpdmUgdG8gcmVzb2x2ZSB0aGUgZGlmZmljdWx0aWVzIG9mIGFwcGx5aW5nIGstbWVhbnMgY2x1c3RlcmluZyBvbiBpbmNvbXBsZXRlIGRhdGEuIAoKSW4gYWRkaXRpb24gdG8gcmVzb2x2aW5nIHRoZSBpbmNvbXBsZXRlIGRhdGEgaXNzdWUsIGBrcG9kKClgIHVzZXJzIGhhdmUgdGhlIGRlZmF1bHQgb3B0aW9uIHRvIHVzZSB0aGUgay1tZWFucysrIGFsZ29yaXRobSB0byBpbml0aWFsaXplIGNlbnRlcnMsIGluIG9yZGVyIHRvIGFkZHJlc3MgdGhlIHBvdGVudGlhbGx5IGluY29uc2lzdGVudCBjbHVzdGVyaW5nIHJlc3VsdHMgY2F1c2VkIGJ5IHJhbmRvbWl6ZWQgaW5pdGlhbCBjZW50ZXJzIGluIGstbWVhbnMgY2x1c3RlcmluZy4KCiMjIEV4YW1wbGUgRGF0YQoKIyMjIG1ha2VEYXRhKCkKCmBrcG9kY2x1c3RyYCBpbmNsdWRlcyBhIGBtYWtlRGF0YSgpYCBmdW5jdGlvbiB0aGF0IGdlbmVyYXRlcyBkYXRhIHNldHMgd2l0aCBtaXNzaW5nIGVudHJpZXMgdW5kZXIgdXNlcidzIGN1c3RvbWl6YXRpb24uIEl0IHByb2R1Y2VzIGEgbGlzdCBvYmplY3QgY29uc2lzdGluZyBvZiAzIG9iamVjdHM6CgoqKioKCi0gIk9yaWciIDogdGhlIGNvbXBsZXRlIGRhdGEgc2V0LgoKLSAiTWlzc2luZyIgOiB0aGUgaW5jb21wbGV0ZSBkYXRhIHNldC4gCgotICJ0cnV0aCIgOiB0aGUgY2x1c3RlciBhc3NpZ25tZW50IG1hdHJpeC4gCgoqKioKCkZvciB0aGUgcmVtYWluZGVyIG9mIHRoZSBkZW1vbnN0cmF0aW9uIG9mIGBrcG9kY2x1c3RlcmAsIHdlIHdpbGwgdXNlIHRoZSBleGFtcGxlIGRhdGEgZ2VuZXJhdGVkIGZyb20gdGhlIGZvbGxvd2luZyBjb2RlLiAKCmBgYHtyIGV4YW1wbGVEYXRhfQpsaWJyYXJ5KGtwb2RjbHVzdHIpCnRlc3REYXRhIDwtIGtwb2RjbHVzdHI6Om1ha2VEYXRhKHAgPSAyLCBuID0gMTAsIGsgPSAzLCBzaWdtYSA9IDAuMjUsIG1pc3NpbmcgPSAwLjIsIHNlZWQgPSAxOTkxKTsgdGVzdERhdGEKYGBgCgojIyMgUGFyYW1ldGVycyBmb3IgdGhpcyBzcGVjaWZpYyBleGFtcGxlOiAKCioqKgoKLSBuID0gMTAgKDEwIG9ic2VydmF0aW9ucykKCi0gcCA9IDIgKGVhY2ggb2JzZXJ2YXRpb24gaGFzIDIgZmVhdHVyZXMpCgotIGsgPSAzICgzIGNsdXN0ZXJzLCAzIGNlbnRyb2lkcykgCgotIHNpZ21hID0gMC4yNSAoZmFjdG9yIG9mIHZhcmlhbmNlIGZvciBub2lzZSBhcm91bmQgdGhlIGNlbnRyb2lkcykgCgotIG1pc3NpbmcgPSAwLjIgKG1pc3NpbmduZXNzLCBvciBwZXJjZW50YWdlIG9mIG1pc3NpbmcgZW50cmllcy4gMTAgKiAyICogMC4yID0gNCBtaXNzaW5nIGVudHJpZXMpCgotIHNlZWQgPSAxOTkxIChyYW5kb20gc2VlZCBmb3IgcmVwcm9kdWNpYmlsaXR5KQoKKioqCgojIyMgUHJvY2VzcyBvZiBgbWFrZURhdGEoKWA6CgoqKioKCjEuIEdlbmVyYXRlIGNlbnRyb2lkIG1hdHJpeCwgYE1gLCB3aXRoIGBrYCpgcGAgcmFuZG9tIHNhbXBsZXMgZnJvbSBzdGFuZGFyZCBub3JtYWwgZGlzdHJpYnV0aW9uLgoKMi4gR2VuZXJhdGUgYXNzaWdubWVudCBtYXRyaXgsIGBhc3NpZ25tZW50YCwgd2l0aCBgbmAgcmFtZG9tIHNhbXBsZXMgZnJvbSAxIHRvIGBrYCB3aXRoIHJlcGxhY2VtZW50LgoKMy4gSW5pdGlhbGl6ZSBjb21wbGV0ZSBkYXRhIG1hdHJpeCwgYFhgLCB1c2luZyBgTWAgYW5kIGBhc3NpZ25tZW50YCwgc28gdGhhdCBlYWNoIG9ic2VydmF0aW9uIG9mIGBYYCBoYXMgdGhlIHNhbWUgZmVhdHVyZXMgYXMgaXRzIGFzc2lnbmVkIGNsdXN0ZXIgY2VudHJvaWQuCgo0LiBBZGQgbm9pc2UgdG8gZWFjaCB2YWx1ZSBpbiB0aGUgaW5pdGlhbGl6ZWQgYFhgIHdpdGggc3RhbmRhcmQgbm9ybWFsIGRpc3RyaWJ1dGlvbiBtdWx0aXBseWluZyBhIGRldmlhdGlvbiBmYWN0b3Igb2YgYHNpZ21hYC4gCgo1LiBJbml0aWFsaXplIGluY29tcGxldGUgZGF0YSBtYXRyaXgsIGBYX21pc3NpbmdgLCBhcyBhIGNvcHkgb2YgYFhgLgoKNi4gR2VuZXJhdGUgaW5kaWNlcyBvZiBtaXNzaW5nIGVudHJpZXMsIGBtaXNzaW5nX2l4YCwgd2l0aCBgbmBcKmBwYFwqYG1pc3NpbmdgIHJhbmRvbSBzYW1wbGVzIGZyb20gMSB0byBgbmBcKmBwYCB3aXRob3V0IHJlcGxhY2VtZW50LgoKNy4gUmVwbGFjZSB2YWx1ZXMgaW4gYFhfbWlzc2luZ2AgYXQgYG1pc3NpbmdfaXhgIGluZGljZXMgd2l0aCBgTkFgLgoKOC4gUmV0dXJuIGBYYCwgYFhfbWlzc2luZ2AsIGFuZCBgYXNzaWdubWVudGAuCgoqKioKCiMjIFVzYWdlIG9mIGstUE9EIHsudGFic2V0fQoKClVzaW5nIHRoZSAKYGBge3J9Cmtwb2RjbHVzdHI6Omtwb2QoWCA9IHRlc3REYXRhW1syXV0sIGsgPSAzKQpgYGAKCgoqZXhwbGFpbiB0aGUgcmV0dXJuZWQgaXRlbXMgd2hlbiBwYXNzaW5nIHRoZSBnZW5lcmF0ZWQgaW5jb21wbGV0ZSBkYXRhIHRocm91Z2gga3BvZCgpKgoKIyMgU3VmZmljaWVuY3kgY29tcGFyaXNvbjogay1tZWFucyB2cyBrLXBvZAoKKlNjYXR0ZXIgcGxvdHMsIGFuZCByYW5kIGluZGV4KgoKCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiSW50cm9kdWN0aW9uIHRvIGtwb2RjbHVzdGVyIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIHsudGFic2V0IC50YWJzZXQtcGlsbHN9CgojIyBXaHkgay1QT0Q/CgojIyMgSy1tZWFucyBkcmF3YmFjawoKT25lIG9mIHRoZSBtb3N0IGNvbW1vbiBjbHVzdGVyaW5nIGFsZ29yaXRobXMgdXNlZCBieSBkYXRhIHNjaWVudGlzdHMgdG9kYXkgaXMgay1tZWFucyBjbHVzdGVyaW5nLiBLLW1lYW5zIGNsdXN0ZXJpbmcgaXMgYW4gZWFzeS10by1mb2xsb3cgYW5kIGZhc3QtdG8tZXhlY3V0ZSBhbGdvcml0aG0gdG8gZnVsZmlsbCBiYXNpYyBjbHVzdGVyaW5nIG5lZWRzIHdpdGggYSBzaW1wbGUgZnVuY3Rpb24gY2FsbCwgYGttZWFucygpYC4gCgpIb3dldmVyLCBrLW1lYW5zIHN1ZmZlcnMgb25lIG1ham9yIGRyYXdiYWNrIDogaXQgcmVxdWlyZXMgYSBfX2NvbXBsZXRlX18gZGF0YSBzZXQgd2l0aG91dCBtaXNzaW5nIGVudHJpZXMuIFJlYWxpc3RpY2FsbHksIGluIG1hbnkgZGF0YSBhbmFseXNpcyBzY2VuYXJpb3MsIGRhdGEgc2V0cyB0ZW5kIHRvIGhhdmUgbWlzc2luZyBlbnRyaWVzIGR1ZSB0byBlcnJvcnMgaW4gZGF0YSBjb2xsZWN0aW9uIG9yIGRhdGEgY2xlYW5pbmcuIFdoZW4gYXR0ZW1wdGluZyB0byBwZXJmb3JtIGstbWVhbnMgY2x1c3RlcmluZyBvbiBkYXRhIHNldHMgd2l0aCBtaXNzaW5nIGVudHJpZXMsIG9uZSBmYWNlcyB0aGUgZm9sbG93aW5nIG9wdGlvbnMgYmVmb3JlIHByb2NlZWRpbmcgdG8gdGhlIGNsdXN0ZXJpbmc6CgoqKioKMS4gZWxpbWluYXRlIHRoZSBvYnNlcnZhdGlvbnMocm93cykgd2l0aCBtaXNzaW5nIGZlYXR1cmVzKGNvbHVtbnMpIGZyb20gdGhlIGRhdGEgc2V0LCB0aGVuIHBlcmZvcm0gay1tZWFucyBjbHVzdGVyaW5nIG9uIHBhcnRpYWwgZGF0YTsKCjIuIGltcHV0ZSB0aGUgbWlzc2luZyB2YWx1ZXMgdXNpbmcgYSBjZXJ0YWluIGFsZ29yaXRobSwgdGhlbiBwZXJmb3JtIGstbWVhbnMgY2x1c3RlcmluZyBvbiBpbXB1dGVkIGRhdGE7CgozLiBjb250YWN0IHRoZSBkYXRhIGNvbGxlY3RpbmcgYWdlbmN5IGZvciBjbGFyaWZpY2F0aW9uIG9uIHRoZSBtaXNzaW5nIHZhbHVlcy4KCioqKgoKIyMjIEstUE9EIHByZXZhaWxzCgpBbGwgdGhlc2Ugb3B0aW9ucyBhcmUgZWl0aGVyIGNvbXB1dGF0aW9uYWxseSBleHBlbnNpdmUsIG9yIGxhY2tpbmcgY29tcGV0ZW5jZSBpbiBwcm9kdWNpbmcgdGhlIGlkZWFsIGNsdXN0ZXJpbmcgcmVzdWx0cy4gVGhlIGBrcG9kY2x1c3RlcmAgcGFja2FnZSdzIGBrcG9kKClgIG9mZmVycyBhbiBlZmZpY2llbnQgYWx0ZXJuYXRpdmUgdG8gcmVzb2x2ZSB0aGUgZGlmZmljdWx0aWVzIG9mIGFwcGx5aW5nIGstbWVhbnMgY2x1c3RlcmluZyBvbiBfX2luY29tcGxldGVfXyBkYXRhLiAKCkluIGFkZGl0aW9uIHRvIHJlc29sdmluZyB0aGUgaW5jb21wbGV0ZSBkYXRhIGlzc3VlLCBga3BvZCgpYCB1c2VycyBoYXZlIHRoZSBkZWZhdWx0IG9wdGlvbiB0byB1c2UgdGhlIF9fay1tZWFucysrX18gYWxnb3JpdGhtIHRvIGluaXRpYWxpemUgY2VudGVycywgaW4gb3JkZXIgdG8gYWRkcmVzcyB0aGUgcG90ZW50aWFsbHkgaW5jb25zaXN0ZW50IGNsdXN0ZXJpbmcgcmVzdWx0cyBjYXVzZWQgYnkgcmFuZG9taXplZCBpbml0aWFsIGNlbnRlcnMgaW4gay1tZWFucyBjbHVzdGVyaW5nLgoKIyMgRXhhbXBsZSBEYXRhCgojIyMgbWFrZURhdGEoKQoKYGtwb2RjbHVzdHJgIGluY2x1ZGVzIGEgYG1ha2VEYXRhKClgIGZ1bmN0aW9uIHRoYXQgZ2VuZXJhdGVzIGRhdGEgc2V0cyB3aXRoIG1pc3NpbmcgZW50cmllcyB1bmRlciB1c2VyJ3MgY3VzdG9taXphdGlvbi4gSXQgcHJvZHVjZXMgYSBsaXN0IG9iamVjdCBjb25zaXN0aW5nIG9mIDMgb2JqZWN0czoKCioqKgoKLSAiT3JpZyIgOiB0aGUgY29tcGxldGUgZGF0YSBzZXQuCgotICJNaXNzaW5nIiA6IHRoZSBpbmNvbXBsZXRlIGRhdGEgc2V0LiAKCi0gInRydXRoIiA6IHRoZSBjbHVzdGVyIGFzc2lnbm1lbnQgbWF0cml4LiAKCioqKgoKRm9yIHRoZSByZW1haW5kZXIgb2YgdGhlIGRlbW9uc3RyYXRpb24gb2YgYGtwb2RjbHVzdGVyYCwgd2Ugd2lsbCB1c2UgdGhlIGV4YW1wbGUgZGF0YSBnZW5lcmF0ZWQgZnJvbSB0aGUgZm9sbG93aW5nIGNvZGUuIAoKYGBge3IgZXhhbXBsZURhdGF9CmxpYnJhcnkoa3BvZGNsdXN0cikKdGVzdERhdGEgPC0ga3BvZGNsdXN0cjo6bWFrZURhdGEocCA9IDIsIG4gPSAyMCwgayA9IDUsIHNpZ21hID0gMC4yNSwgbWlzc2luZyA9IDAuMywgc2VlZCA9IDE5OTEpOyB0ZXN0RGF0YQpgYGAKCiMjIyBQYXJhbWV0ZXJzIGZvciB0aGlzIHNwZWNpZmljIGV4YW1wbGU6IAoKKioqCgotIG4gPSAyMCAoMjAgb2JzZXJ2YXRpb25zKQoKLSBwID0gMiAoZWFjaCBvYnNlcnZhdGlvbiBoYXMgMiBmZWF0dXJlcykKCi0gayA9IDUgKDUgY2x1c3RlcnMsIDUgY2VudHJvaWRzKSAKCi0gc2lnbWEgPSAwLjI1IChmYWN0b3Igb2YgdmFyaWFuY2UgZm9yIG5vaXNlIGFyb3VuZCB0aGUgY2VudHJvaWRzKSAKCi0gbWlzc2luZyA9IDAuMyAobWlzc2luZ25lc3MsIG9yIHBlcmNlbnRhZ2Ugb2YgbWlzc2luZyBlbnRyaWVzLiAyMCAqIDIgKiAwLjMgPSAxMiBtaXNzaW5nIGVudHJpZXMpCgotIHNlZWQgPSAxOTkxIChyYW5kb20gc2VlZCBmb3IgcmVwcm9kdWNpYmlsaXR5KQoKKioqCgojIyMgUHJvY2VzcyBvZiBgbWFrZURhdGEoKWA6CgoqKioKCjEuIEdlbmVyYXRlIGNlbnRyb2lkIG1hdHJpeCwgYE1gLCB3aXRoIGBrYCpgcGAgcmFuZG9tIHNhbXBsZXMgZnJvbSBzdGFuZGFyZCBub3JtYWwgZGlzdHJpYnV0aW9uLgoKMi4gR2VuZXJhdGUgYXNzaWdubWVudCBtYXRyaXgsIGBhc3NpZ25tZW50YCwgd2l0aCBgbmAgcmFtZG9tIHNhbXBsZXMgZnJvbSAxIHRvIGBrYCB3aXRoIHJlcGxhY2VtZW50LgoKMy4gSW5pdGlhbGl6ZSBjb21wbGV0ZSBkYXRhIG1hdHJpeCwgYFhgLCB1c2luZyBgTWAgYW5kIGBhc3NpZ25tZW50YCwgc28gdGhhdCBlYWNoIG9ic2VydmF0aW9uIG9mIGBYYCBoYXMgdGhlIHNhbWUgZmVhdHVyZXMgYXMgaXRzIGFzc2lnbmVkIGNsdXN0ZXIgY2VudHJvaWQuCgo0LiBBZGQgbm9pc2UgdG8gZWFjaCB2YWx1ZSBpbiB0aGUgaW5pdGlhbGl6ZWQgYFhgIHdpdGggc3RhbmRhcmQgbm9ybWFsIGRpc3RyaWJ1dGlvbiBtdWx0aXBseWluZyBhIGRldmlhdGlvbiBmYWN0b3Igb2YgYHNpZ21hYC4gCgo1LiBJbml0aWFsaXplIGluY29tcGxldGUgZGF0YSBtYXRyaXgsIGBYX21pc3NpbmdgLCBhcyBhIGNvcHkgb2YgYFhgLgoKNi4gR2VuZXJhdGUgaW5kaWNlcyBvZiBtaXNzaW5nIGVudHJpZXMsIGBtaXNzaW5nX2l4YCwgd2l0aCBgbmBcKmBwYFwqYG1pc3NpbmdgIHJhbmRvbSBzYW1wbGVzIGZyb20gMSB0byBgbmBcKmBwYCB3aXRob3V0IHJlcGxhY2VtZW50LgoKNy4gUmVwbGFjZSB2YWx1ZXMgaW4gYFhfbWlzc2luZ2AgYXQgYG1pc3NpbmdfaXhgIGluZGljZXMgd2l0aCBgTkFgLgoKOC4gUmV0dXJuIGBYYCwgYFhfbWlzc2luZ2AsIGFuZCBgYXNzaWdubWVudGAuCgoqKioKCiMjIFVzYWdlIG9mIGstUE9EIAoKIyMjIFVzYWdlIG9mIGstUE9ECgpUaGUgX19rZXkgZnVuY3Rpb25fXyBpbiBga3BvZGNsdXN0cmAgaXMgYGtwb2QoKWAuIGBrcG9kKClgIGRlbGVnYXRlcyB0byB0aGUgcmVzdCBvZiB0aGUgZnVuY3Rpb25zIGluIGBrcG9kY2x1c3RyYC4gTGlrZSBga21lYW5zKClgLCBga3BvZCgpYCBoYXMgYSBkYXRhIHNldCBwYXJhbWV0ZXIsIGFuZCBhIG51bWJlci1vZi1jbHVzdGVycyBwYXJhbWV0ZXIuIFRoZSBkaWZmZXJlbmNlIGlzIHRoYXQgYGtwb2QoKWAgdGFrZXMgaW4gYSBpbmNvbXBsZXRlIGRhdGEgc2V0LiBUaGUgZm9sbG93aW5nIGNvZGUgYW5kIG91dHB1dCBkaXNwbGF5cyB0aGUgdXNhZ2Ugb2YgYGtwb2QoKWAgb24gdGhlIHNlY29uZCBvYmplY3QgaW4gdGhlIEV4YW1wbGUgRGF0YSBsaXN0LCBgWF9taXNzaW5nYC4KCmBgYHtyfQprcG9kY2x1c3RyOjprcG9kKFggPSB0ZXN0RGF0YVtbMl1dLCBrID0gNSkKYGBgCgojIyMgUmV0dXJuZWQgaXRlbXMgZXhwbGFpbmVkCgoqKioKCi0gImNsdXN0ZXIiIDogVGhlIF9fZmluYWxfXyBjbHVzdGVyIGFzc2lnbm1lbnQgbWF0cml4IGNvbnRhaW5pbmcgYSBzZXF1ZW5jZSBvZiBjbHVzdGVyIGxhYmVscyBjb3JyZXNwb25kaW5nIHRvIGVhY2ggb2JzZXJ2YXRpb24uCgotICJjbHVzdGVyX2xpc3QiIDogQSBsaXN0IG9mIGNsdXN0ZXIgYXNzaWdubWVudCBtYXRyaWNlcyB0aHJvdWdob3V0IGFsbCBpdGVyYXRpb25zIHVudGlsIGNsdXN0ZXJpbmcgY29udmVyZ2VzIG9yIGBrcG9kKClgIHJlYWNoZXMgbWF4aW11bSBpdGVyYXRpb25zLiBJZiBjbHVzdGVyaW5nIGNvbnZlcmdlcywgdGhlIGxhc3QgdHdvIGNsdXN0ZXIgYXNzaWdubWVudCBtYXRyaWNlcyBzaG91bGQgYmUgdGhlIHNhbWUuIGBjbHVzdGVyYCBpcyB0aGUgbGFzdCBvYmplY3QgaW4gYGNsdXN0ZXJfbGlzdGAuCgotICJvYmpfdmFscyIgOiBUaGUgY2FsY3VsYXRlZCB2YWx1ZSBvZiB0aGUgay1tZWFucyBvYmplY3RpdmUgZnVuY3Rpb24gdGhyb3VnaG91dCBpdGVyYXRpb25zLiBUaGUgay1tZWFucyBvYmplY3RpdmUgZnVuY3Rpb24gbWVhc3VyZXMgdGhlIGludHJhLWNsdXN0ZXIgdmFyaWFuY2UsIHRoZSBzdW0gb2Ygc3F1YXJlZCBkaXN0YW5jZSBiZXR3ZWVuIGVhY2ggb2JzZXJ2YXRpb24gYW5kIGl0cyBjbHVzdGVyIGNlbnRlci4gSy1tZWFucyBhaW1zIHRvIG1pbmltaXplIHRoaXMgaW50cmEtY2x1c3RlciB2YXJpYW5jZS4gQXMgc2hvd24gaW4gdGhlIGV4YW1wbGUgb3V0cHV0LCB0aGUgb2JqZWN0aXZlIGZ1bmN0aW9uIHZhbHVlIGRlY3JlYXNlcyBhcyBrLVBPRCBjbHVzdGVyaW5nIHByb2dyZXNzZXMuIAoKLSAiZml0IiA6IFRoZSBfX2ZpbmFsX18gbWVhc3VyZW1lbnQgb2YgZml0IG9mIGNsdXN0ZXIgYXNzaWdubWVudCBhZnRlciBjbHVzdGVyaW5nIGNvbW1lbmNlcy4gVGhlIGNsb3NlciB0aGUgZml0IGlzIHRvIDEsIHRoZSBiZXR0ZXIgdGhlIGZpdC4gVGhlIGZpdCBlcXVhdGlvbiBpcyBleHBsYWluZWQgYmVsb3cgdGhpcyBzZWN0aW9uLgoKLSAiZml0X2xpc3QiIDogQSBsaXN0IG9mIG1lYXN1cmVtZW50IG9mIGZpdCBvZiBjbHVzdGVyIGFzc2lnbm1lbnQgdGhyb3VnaG91dCBhbGwgaXRlcmF0aW9ucyB1bnRpbCBjbHVzdGVyaW5nIGNvbnZlcmdlcyBvciBga3BvZCgpYCByZWFjaGVzIG1heGltdW0gaXRlcmF0aW9ucy4gYGZpdGAgaXMgdGhlIGxhc3Qgb2JqZWN0IGluIGBmaXRfbGlzdGAuIEFzIHNob3duIGluIHRoZSBleGFtcGxlIG91dHB1dCwgdGhlIGZpdCBpbmNyZWFzZXMgYW5kIGFwcHJvYWNoZXMgMSBhcyBrLVBPRCBjbHVzdGVyaW5nIHByb2dyZXNzZXMuCgoqKioKCiMjIyBUaGUgImZpdCIgZXF1YXRpb24KCiMjIGstbWVhbnMgdnMgay1wb2QKCipTY2F0dGVyIHBsb3RzLCBhbmQgcmFuZCBpbmRleCoKCgo=</div>
 
 
 

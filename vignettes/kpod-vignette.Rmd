@@ -5,11 +5,13 @@ output: html_notebook
 
 # {.tabset .tabset-pills}
 
-## Foreword
+## Why k-POD?
+
+### K-means drawback
 
 One of the most common clustering algorithms used by data scientists today is k-means clustering. K-means clustering is an easy-to-follow and fast-to-execute algorithm to fulfill basic clustering needs with a simple function call, `kmeans()`. 
 
-However, k-means suffers one major __drawback__: it requires a complete data set without missing entries. Realistically, in many data analysis scenarios, data sets tend to have missing entries due to errors in data collection or data cleaning. When attempting to perform k-means clustering on data sets with missing entries, one faces the following options before proceeding to the clustering:
+However, k-means suffers one major drawback : it requires a __complete__ data set without missing entries. Realistically, in many data analysis scenarios, data sets tend to have missing entries due to errors in data collection or data cleaning. When attempting to perform k-means clustering on data sets with missing entries, one faces the following options before proceeding to the clustering:
 
 ***
 1. eliminate the observations(rows) with missing features(columns) from the data set, then perform k-means clustering on partial data;
@@ -20,9 +22,11 @@ However, k-means suffers one major __drawback__: it requires a complete data set
 
 ***
 
-However, all these options are either computationally expensive, or lacking competence in producing the ideal clustering results. The `kpodcluster` package's `kpod()` offers an efficient alternative to resolve the difficulties of applying k-means clustering on incomplete data. 
+### K-POD prevails
 
-In addition to resolving the incomplete data issue, `kpod()` users have the default option to use the k-means++ algorithm to initialize centers, in order to address the potentially inconsistent clustering results caused by randomized initial centers in k-means clustering.
+All these options are either computationally expensive, or lacking competence in producing the ideal clustering results. The `kpodcluster` package's `kpod()` offers an efficient alternative to resolve the difficulties of applying k-means clustering on __incomplete__ data. 
+
+In addition to resolving the incomplete data issue, `kpod()` users have the default option to use the __k-means++__ algorithm to initialize centers, in order to address the potentially inconsistent clustering results caused by randomized initial centers in k-means clustering.
 
 ## Example Data
 
@@ -44,22 +48,22 @@ For the remainder of the demonstration of `kpodcluster`, we will use the example
 
 ```{r exampleData}
 library(kpodclustr)
-testData <- kpodclustr::makeData(p = 2, n = 10, k = 3, sigma = 0.25, missing = 0.2, seed = 1991); testData
+testData <- kpodclustr::makeData(p = 2, n = 20, k = 5, sigma = 0.25, missing = 0.3, seed = 1991); testData
 ```
 
 ### Parameters for this specific example: 
 
 ***
 
-- n = 10 (10 observations)
+- n = 20 (20 observations)
 
 - p = 2 (each observation has 2 features)
 
-- k = 3 (3 clusters, 3 centroids) 
+- k = 5 (5 clusters, 5 centroids) 
 
 - sigma = 0.25 (factor of variance for noise around the centroids) 
 
-- missing = 0.2 (missingness, or percentage of missing entries. 10 * 2 * 0.2 = 4 missing entries)
+- missing = 0.3 (missingness, or percentage of missing entries. 20 * 2 * 0.3 = 12 missing entries)
 
 - seed = 1991 (random seed for reproducibility)
 
@@ -87,18 +91,35 @@ testData <- kpodclustr::makeData(p = 2, n = 10, k = 3, sigma = 0.25, missing = 0
 
 ***
 
-## Usage of k-POD {.tabset}
+## Usage of k-POD 
 
+### Usage of k-POD
 
-Using the 
+The __key function__ in `kpodclustr` is `kpod()`. `kpod()` delegates to the rest of the functions in `kpodclustr`. Like `kmeans()`, `kpod()` has a data set parameter, and a number-of-clusters parameter. The difference is that `kpod()` takes in a incomplete data set. The following code and output displays the usage of `kpod()` on the second object in the Example Data list, `X_missing`.
+
 ```{r}
-kpodclustr::kpod(X = testData[[2]], k = 3)
+kpodclustr::kpod(X = testData[[2]], k = 5)
 ```
 
+### Returned items explained
 
-*explain the returned items when passing the generated incomplete data through kpod()*
+***
 
-## Sufficiency comparison: k-means vs k-pod
+- "cluster" : The __final__ cluster assignment matrix containing a sequence of cluster labels corresponding to each observation.
+
+- "cluster_list" : A list of cluster assignment matrices throughout all iterations until clustering converges or `kpod()` reaches maximum iterations. If clustering converges, the last two cluster assignment matrices should be the same. `cluster` is the last object in `cluster_list`.
+
+- "obj_vals" : The calculated value of the k-means objective function throughout iterations. The k-means objective function measures the intra-cluster variance, the sum of squared distance between each observation and its cluster center. K-means aims to minimize this intra-cluster variance. As shown in the example output, the objective function value decreases as k-POD clustering progresses. 
+
+- "fit" : The __final__ measurement of fit of cluster assignment after clustering commences. The closer the fit is to 1, the better the fit. The fit equation is explained below this section.
+
+- "fit_list" : A list of measurement of fit of cluster assignment throughout all iterations until clustering converges or `kpod()` reaches maximum iterations. `fit` is the last object in `fit_list`. As shown in the example output, the fit increases and approaches 1 as k-POD clustering progresses.
+
+***
+
+### The "fit" equation
+
+## k-means vs k-pod
 
 *Scatter plots, and rand index*
 
