@@ -3,6 +3,7 @@ title: "Introduction to kpodcluster"
 output: html_notebook
 ---
 
+
 # {.tabset .tabset-pills}
 
 ## Why k-POD?
@@ -24,9 +25,10 @@ However, k-means suffers one major drawback : it requires a __complete__ data se
 
 ### K-POD prevails
 
-All these options are either computationally expensive, or lacking competence in producing the ideal clustering results. The `kpodcluster` package's `kpod()` offers an efficient alternative to resolve the difficulties of applying k-means clustering on __incomplete__ data. 
+All these options are either computationally expensive, or lacking competence in producing the ideal clustering results. The `kpodcluster` package's `kpod()` offers an simple, reliable and fast alternative to resolve the difficulties of applying k-means clustering on __incomplete__ data. 
 
 In addition to resolving the incomplete data issue, `kpod()` users have the default option to use the __k-means++__ algorithm to initialize centers, in order to address the potentially inconsistent clustering results caused by randomized initial centers in k-means clustering.
+
 ***
 
 ## Example Data
@@ -62,7 +64,7 @@ testData <- kpodclustr::makeData(p = 2, n = 20, k = 5, sigma = 0.25, missing = 0
 
 - k = 5 (5 clusters, 5 centroids) 
 
-- sigma = 0.25 (factor of variance for noise around the centroids) 
+- sigma = 0.25 (scalar of variance for noise around the centroids) 
 
 - missing = 0.3 (missingness, or percentage of missing entries. 20 * 2 * 0.3 = 12 missing entries)
 
@@ -80,7 +82,7 @@ testData <- kpodclustr::makeData(p = 2, n = 20, k = 5, sigma = 0.25, missing = 0
 
 3. Initialize complete data matrix, `X`, using `M` and `assignment`, so that each observation of `X` has the same features as its assigned cluster centroid.
 
-4. Add noise to each value in the initialized `X` with standard normal distribution multiplying a deviation factor of `sigma`. 
+4. Add noise to each value in the initialized `X` with standard normal distribution multiplying a deviation scalar of `sigma`. 
 
 5. Initialize incomplete data matrix, `X_missing`, as a copy of `X`.
 
@@ -98,7 +100,7 @@ testData <- kpodclustr::makeData(p = 2, n = 20, k = 5, sigma = 0.25, missing = 0
 
 The __key function__ in `kpodclustr` is `kpod()`. `kpod()` delegates to the rest of the functions in `kpodclustr`. Like `kmeans()`, `kpod()` has a data set parameter, and a number-of-clusters parameter. The difference is that `kpod()` takes in a incomplete data set. The following code and output displays the usage of `kpod()` on the second object in the Example Data list, `X_missing`.
 
-```{r}
+```{r kpodUsage}
 kpodclustr::kpod(X = testData[[2]], k = 5)
 ```
 
@@ -134,8 +136,61 @@ Identity: <center> $totss = \sum withinss + betweenss$ </center>
 
 ***
 
-## k-means vs k-pod
+## k-means vs k-POD
 
-*Scatter plots, and rand index*
+"The k-POD method builds upon k-means clustering to provide a simple and quick alternative to clustering missing data that works even _when the missingness mechanism is unknown, when external information is unavailable, and when there is significant missingness in the data_."
+
+### Performance comparison {.tabset}
+
+#### Data 1
+
+Data 1: p = 2, n = 20, k = 3, sigma = 0.25, seed = 1991
+
+```{r data1means, echo=FALSE}
+library(ggplot2)
+data1 <- kpodclustr::makeData(p = 2, n = 20, k = 3, sigma = 0.25, missing = 0.1, seed = 1991)
+X1991 <- data1[[1]]
+km1991 <- kmeans(X1991,3)
+g1991means <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(km1991$cluster))) + geom_point() + theme(legend.position = "none") 
+# g1991means <- g1991means + geom_point(data = as.data.frame(km1991$centers), mapping = aes(x=km1991$centers[,1],y=km1991$centers[,2], color = "black",size = 3))
+g1991means <- g1991means + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k-means with complete data")
+g1991means 
+```
+
+```{r data1pod0.1, echo=FALSE}
+Xm1991 <- data1[[2]]
+kp1991 <- kpodclustr::kpod(Xm1991,3)
+g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
+g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k-POD with 10% missingness")
+g1991pod
+```
 
 
+```{r data1pod0.2, echo=FALSE}
+data1 <- kpodclustr::makeData(p = 2, n = 20, k = 3, sigma = 0.25, missing = 0.2, seed = 1991)
+
+Xm1991 <- data1[[2]]
+kp1991 <- kpodclustr::kpod(Xm1991,3)
+g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
+g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k-POD with 20% missingness")
+g1991pod
+```
+
+```{r data1pod0.3, echo=FALSE}
+data1 <- kpodclustr::makeData(p = 2, n = 20, k = 3, sigma = 0.25, missing = 0.3, seed = 1991)
+Xm1991 <- data1[[2]]
+kp1991 <- kpodclustr::kpod(Xm1991,3)
+g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
+g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k-POD with 30% missingness")
+g1991pod
+```
+
+```{r data1pod0.5, echo=FALSE}
+data1 <- kpodclustr::makeData(p = 2, n = 20, k = 3, sigma = 0.25, missing = 0.5, seed = 1991)
+
+Xm1991 <- data1[[2]]
+kp1991 <- kpodclustr::kpod(Xm1991,3)
+g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
+g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k-POD with 50% missingness")
+g1991pod
+```

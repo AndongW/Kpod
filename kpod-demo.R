@@ -335,7 +335,7 @@ B1991 <- data1991[[3]]
 A1991 <- data1991[[4]]
 ## run k-mean on 100% data 1991.
 init_centers1991 <- kpodclustr::kmpp(X1991,3)
-km1991 <- kmeans(X1991,init_centers1991)
+km1991 <- kmeans(X1991,3)
 fit_km1991 <- 1-(sum(km1991$withinss)/km1991$totss)
 ## run k-pod on 80% data1991.
 kp1991 <- kpodclustr::kpod(Xm1991,3)
