@@ -27,6 +27,7 @@ However, k-means suffers one major drawback : it requires a __complete__ data se
 All these options are either computationally expensive, or lacking competence in producing the ideal clustering results. The `kpodcluster` package's `kpod()` offers an efficient alternative to resolve the difficulties of applying k-means clustering on __incomplete__ data. 
 
 In addition to resolving the incomplete data issue, `kpod()` users have the default option to use the __k-means++__ algorithm to initialize centers, in order to address the potentially inconsistent clustering results caused by randomized initial centers in k-means clustering.
+***
 
 ## Example Data
 
@@ -36,11 +37,11 @@ In addition to resolving the incomplete data issue, `kpod()` users have the defa
 
 ***
 
-- "Orig" : the complete data set.
+- `Orig` : the complete data set.
 
-- "Missing" : the incomplete data set. 
+- `Missing` : the incomplete data set. 
 
-- "truth" : the cluster assignment matrix. 
+- `truth` : the cluster assignment matrix. 
 
 ***
 
@@ -105,19 +106,33 @@ kpodclustr::kpod(X = testData[[2]], k = 5)
 
 ***
 
-- "cluster" : The __final__ cluster assignment matrix containing a sequence of cluster labels corresponding to each observation.
+- `cluster` : The final cluster assignment matrix containing a sequence of cluster labels corresponding to each observation.
 
-- "cluster_list" : A list of cluster assignment matrices throughout all iterations until clustering converges or `kpod()` reaches maximum iterations. If clustering converges, the last two cluster assignment matrices should be the same. `cluster` is the last object in `cluster_list`.
+- `cluster_list` : A list of cluster assignment matrices throughout all iterations until clustering converges or `kpod()` reaches maximum iterations. If clustering converges, the last two cluster assignment matrices should be the same. `cluster` is the last object in `cluster_list`.
 
-- "obj_vals" : The calculated value of the k-means objective function throughout iterations. The k-means objective function measures the intra-cluster variance, the sum of squared distance between each observation and its cluster center. K-means aims to minimize this intra-cluster variance. As shown in the example output, the objective function value decreases as k-POD clustering progresses. 
+- `obj_vals` : The calculated value of the k-means objective function throughout iterations. The __k-means objective function__ measures the sum of all "intra-cluster variance", or "within-cluster sum of square", which is the sum of squared distance between each observation and its cluster center for all observations. K-means aims to minimize this intra-cluster variance. As shown in the example output, the objective function value decreases as k-POD clustering progresses. 
 
-- "fit" : The __final__ measurement of fit of cluster assignment after clustering commences. The closer the fit is to 1, the better the fit. The fit equation is explained below this section.
+- `fit` : The final measurement of fit of cluster assignment after clustering commences. The closer the fit is to 1, the better the fit. The fit equation is explained below this section.
 
-- "fit_list" : A list of measurement of fit of cluster assignment throughout all iterations until clustering converges or `kpod()` reaches maximum iterations. `fit` is the last object in `fit_list`. As shown in the example output, the fit increases and approaches 1 as k-POD clustering progresses.
+- `fit_list` : A list of measurement of fit of cluster assignment throughout all iterations until clustering converges or `kpod()` reaches maximum iterations. `fit` is the last object in `fit_list`. As shown in the example output, the fit increases and approaches 1 as k-POD clustering progresses.
 
 ***
 
-### The "fit" equation
+### The `fit` equation
+
+***
+<center> $fit = 1 - ((\sum withinss) / (totss))$ </center>
+***
+
+As mentioned in explanation of `obj_vals`, "withinss" means "within-cluster sum of square", which is the sum of squared distance between each observation and its cluster center for each cluster. Taking the sum of "withinss" yields the sum of squared distance between each observation and its cluster center for all clusters.
+
+There is also "betweenss", meaning "between-cluster sum of square" or "inter-cluster variance", is the sum of squared distance between all cluster centroids. 
+
+"totss", meaning "total sum of square", is the sum of squared distance between each observation and the global center(the center of all observations). 
+
+Identity: <center> $totss = \sum withinss + betweenss$ </center>
+
+***
 
 ## k-means vs k-pod
 
