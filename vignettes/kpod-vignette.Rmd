@@ -1,6 +1,8 @@
 ---
 title: "Introduction to kpodcluster"
-output: html_notebook
+output: 
+  html_notebook:
+    code_folding: hide
 ---
 
 
@@ -49,7 +51,7 @@ In addition to resolving the incomplete data issue, `kpod()` users have the defa
 
 For the remainder of the demonstration of `kpodcluster`, we will use the example data generated from the following code. 
 
-```{r exampleData}
+```{r exampleData,class.source = 'fold-show'}
 library(kpodclustr)
 testData <- kpodclustr::makeData(p = 2, n = 20, k = 5, sigma = 0.25, missing = 0.3, seed = 1991); testData
 ```
@@ -100,7 +102,7 @@ testData <- kpodclustr::makeData(p = 2, n = 20, k = 5, sigma = 0.25, missing = 0
 
 The __key function__ in `kpodclustr` is `kpod()`. `kpod()` delegates to the rest of the functions in `kpodclustr`. Like `kmeans()`, `kpod()` has a data set parameter, and a number-of-clusters parameter. The difference is that `kpod()` takes in a incomplete data set. The following code and output displays the usage of `kpod()` on the second object in the Example Data list, `X_missing`.
 
-```{r kpodUsage}
+```{r kpodUsage, class.source = 'fold-show'}
 kpodclustr::kpod(X = testData[[2]], k = 5)
 ```
 
@@ -132,35 +134,44 @@ There is also "betweenss", meaning "between-cluster sum of square" or "inter-clu
 
 "totss", meaning "total sum of square", is the sum of squared distance between each observation and the global center(the center of all observations). 
 
-Identity: <center> $totss = \sum withinss + betweenss$ </center>
+A related identity: <center> $totss = \sum withinss + betweenss$ </center>
 
 ***
 
 ## k-means vs k-POD
 
-"The k-POD method builds upon k-means clustering to provide a simple and quick alternative to clustering missing data that works even _when the missingness mechanism is unknown, when external information is unavailable, and when there is significant missingness in the data_."
+> The k-POD method builds upon k-means clustering to provide a simple and quick alternative to clustering missing data that works even when _the missingness mechanism is unknown_, when _external information is unavailable_, and when _there is significant missingness in the data_. --- "k-POD: A Method for k-Means Clustering of Missing Data" by Jocelyn T. Chi, Eric C. Chi & Richard G. Baraniuk
 
-### Performance comparison {.tabset}
+### Performance comparison {.tabset .tabset-pills}
+
+In this clustering performance comparison between k-means and k-POD, we will focus on 2 metrics: fit and Adjusted Rand Index (ARI). 
+
+The fit metric is explained under "Usage of k-POD". 
+
+The ARI metric is a measure of similarity between 2 data clusterings. The maximum ARI is 1, meaning the 2 clustering results are the same. The lower the ARI, the greater the difference between 2 data clusterings. The "adjusted" aspect takes into account the permutations of cluster labels. For example, clustering result [1,2,3,3,1] is the same as [2,3,1,1,3]. Therefore, the ARI between those two clusterings is 1. 
+
+__Notice__: The scatter plots for k-POD performance will include all observations in the complete data, because the point of k-POD is to perform clustering on all the observations without eliminating the observations with missing features. However, in k-POD, those missing features will be assigned values and updated throughout iterations, which are not likely the same values as the ones in the complete data. 
 
 #### Data 1
 
-Data 1: p = 2, n = 20, k = 3, sigma = 0.25, seed = 1991
+Data 1 parameters: p = 2, n = 20, k = 3, sigma = 0.25, seed = 1991
 
-```{r data1means, echo=FALSE}
+Data 1 is a relatively small data set. We will be looking at k-means performance with 0% missing; k-POD performance with 10% missing; k-POD performance with 20% missing; k-POD performance with 30% missing; k-POD performance with 40% missing; k-POD performance with 50% missing, demonstrated by the following scatter plots, colored by cluster group.  
+
+
+```{r data1means, out.height="50%", out.width="50%"}
 library(ggplot2)
 data1 <- kpodclustr::makeData(p = 2, n = 20, k = 3, sigma = 0.25, missing = 0.1, seed = 1991)
 X1991 <- data1[[1]]
 km1991 <- kmeans(X1991,3)
 g1991means <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(km1991$cluster))) + geom_point() + theme(legend.position = "none") 
-# g1991means <- g1991means + geom_point(data = as.data.frame(km1991$centers), mapping = aes(x=km1991$centers[,1],y=km1991$centers[,2], color = "black",size = 3))
+g1991means <- g1991means + geom_point(data = as.data.frame(km1991$centers), mapping = aes(x=km1991$centers[,1],y=km1991$centers[,2],size = 3), color = "black")
 g1991means <- g1991means + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k-means with complete data")
 g1991means 
-
 fit_km1991 <- 1-(sum(km1991$withinss)/km1991$totss)
-paste0("The fit of this k-means clustering is ", fit_km1991, ".")
 ```
 
-```{r data1pod0.1, echo=FALSE}
+```{r data1pod0.1}
 Xm1991 <- data1[[2]]
 kp1991 <- kpodclustr::kpod(Xm1991,3)
 g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
@@ -169,10 +180,13 @@ g1991pod
 
 fit_kp1991 <- rep(0,5)
 fit_kp1991[1] <- kp1991$fit
-paste0("The fit of this k-POD clustering is ", fit_kp1991[1], ".")
+
+library(fossil)
+ari_kp1991 <- rep(0,5)
+ari_kp1991[1] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 ```
 
-```{r data1pod0.2, echo=FALSE}
+```{r data1pod0.2}
 data1 <- kpodclustr::makeData(p = 2, n = 20, k = 3, sigma = 0.25, missing = 0.2, seed = 1991)
 
 Xm1991 <- data1[[2]]
@@ -182,11 +196,10 @@ g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k
 g1991pod
 
 fit_kp1991[2] <- kp1991$fit
-paste0("The fit of this k-POD clustering is ", fit_kp1991[2], ".")
-
+ari_kp1991[2] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 ```
 
-```{r data1pod0.3, echo=FALSE}
+```{r data1pod0.3}
 data1 <- kpodclustr::makeData(p = 2, n = 20, k = 3, sigma = 0.25, missing = 0.3, seed = 1991)
 Xm1991 <- data1[[2]]
 kp1991 <- kpodclustr::kpod(Xm1991,3)
@@ -195,10 +208,10 @@ g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k
 g1991pod
 
 fit_kp1991[3] <- kp1991$fit
-paste0("The fit of this k-POD clustering is ", fit_kp1991[3], ".")
+ari_kp1991[3] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 ```
 
-```{r data1pod0.4, echo=FALSE}
+```{r data1pod0.4}
 data1 <- kpodclustr::makeData(p = 2, n = 20, k = 3, sigma = 0.25, missing = 0.4, seed = 1991)
 
 Xm1991 <- data1[[2]]
@@ -208,10 +221,10 @@ g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k
 g1991pod
 
 fit_kp1991[4] <- kp1991$fit
-paste0("The fit of this k-POD clustering is ", fit_kp1991[4], ".")
+ari_kp1991[4] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 ```
 
-```{r data1pod0.5, echo=FALSE}
+```{r data1pod0.5}
 data1 <- kpodclustr::makeData(p = 2, n = 20, k = 3, sigma = 0.25, missing = 0.5, seed = 1991)
 
 Xm1991 <- data1[[2]]
@@ -221,51 +234,57 @@ g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k
 g1991pod
 
 fit_kp1991[5] <- kp1991$fit
-paste0("The fit of this k-POD clustering is ", fit_kp1991[5], ".")
+ari_kp1991[5] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 ```
-```{r data1podfit, echo=FALSE}
+```{r data1metrics}
 missingpcts <- c(0.1,0.2,0.3,0.4,0.5)
-fit_list <- cbind(missingpcts,fit_kp1991)
+metrics_list <- cbind(missingpcts,fit_kp1991,ari_kp1991)
 
-g1991podfit <- ggplot(data = as.data.frame(fit_list), mapping = aes(x=missingpcts,y=fit_kp1991)) + geom_line() + geom_point() + geom_label(aes(label = round(fit_kp1991,4)), nudge_y = -0.1)
-
+g1991podfit <- ggplot(data = as.data.frame(metrics_list), mapping = aes(x=missingpcts,y=fit_kp1991)) + geom_line() + geom_point() + geom_label(aes(label = round(fit_kp1991,4)), nudge_y = -0.1)
 g1991podfit <- g1991podfit + geom_hline(mapping = aes(yintercept = fit_km1991), color = "blue")
-
 g1991podfit <- g1991podfit + labs(x = "Missingness", y = "Fit") + ylim(0,1)
 g1991podfit
+
+g1991podari <- ggplot(data = as.data.frame(metrics_list), mapping = aes(x=missingpcts,y=ari_kp1991)) + geom_line() + geom_point() + geom_label(aes(label = round(ari_kp1991,4)), nudge_y = -0.1)
+g1991podari <- g1991podari + labs(x = "Missingness", y = "ARI") + ylim(0,1)
+g1991podari
+
 ```
+
 
 #### Data 2
 
-Data 2: p = 2, n = 100, k = 5, sigma = 0.25, seed = 1991
+Data 2: p = 2, n = 1000, k = 3, sigma = 0.25, seed = 1991
 
-```{r data2means, echo=FALSE}
-data2 <- kpodclustr::makeData(p = 2, n = 100, k = 5, sigma = 0.25, missing = 0.1, seed = 1991)
+```{r data2means}
+data2 <- kpodclustr::makeData(p = 2, n = 1000, k = 3, sigma = 0.25, missing = 0.1, seed = 1991)
 X1991 <- data2[[1]]
-km1991 <- kmeans(X1991,5)
+km1991 <- kmeans(X1991,3)
 g1991means <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(km1991$cluster))) + geom_point() + theme(legend.position = "none") 
-# g1991means <- g1991means + geom_point(data = as.data.frame(km1991$centers), mapping = aes(x=km1991$centers[,1],y=km1991$centers[,2], color = "black",size = 3))
+g1991means <- g1991means + geom_point(data = as.data.frame(km1991$centers), mapping = aes(x=km1991$centers[,1],y=km1991$centers[,2], size = 3), color = "black")
 g1991means <- g1991means + labs(x = "Feature 1", y = "Feature 2", title = "Data 2, k-means with complete data")
 g1991means 
 
 fit_km1991 <- 1-(sum(km1991$withinss)/km1991$totss)
-paste0("The fit of this k-means clustering is ", fit_km1991, ".")
 ```
+Comment: This example happen to demonstrate the inconsistencies in k-means clustering!
 
-```{r data2pod0.1, echo=FALSE}
+```{r data2pod0.1}
 Xm1991 <- data2[[2]]
-kp1991 <- kpodclustr::kpod(Xm1991,5)
+kp1991 <- kpodclustr::kpod(Xm1991,3)
 g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
 g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 2, k-POD with 10% missingness")
 g1991pod
 
 fit_kp1991 <- rep(0,5)
 fit_kp1991[1] <- kp1991$fit
-paste0("The fit of this k-POD clustering is ", fit_kp1991[1], ".")
+
+ari_kp1991 <- rep(0,5)
+ari_kp1991[1] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 ```
 
-```{r data2pod0.2, echo=FALSE}
-data2 <- kpodclustr::makeData(p = 2, n = 100, k = 5, sigma = 0.25, missing = 0.2, seed = 1991)
+```{r data2pod0.2}
+data2 <- kpodclustr::makeData(p = 2, n = 1000, k = 3, sigma = 0.25, missing = 0.2, seed = 1991)
 
 Xm1991 <- data2[[2]]
 kp1991 <- kpodclustr::kpod(Xm1991,3)
@@ -274,12 +293,11 @@ g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 2, k
 g1991pod
 
 fit_kp1991[2] <- kp1991$fit
-paste0("The fit of this k-POD clustering is ", fit_kp1991[2], ".")
-
+ari_kp1991[2] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 ```
 
-```{r data2pod0.3, echo=FALSE}
-data2 <- kpodclustr::makeData(p = 2, n = 100, k = 5, sigma = 0.25, missing = 0.3, seed = 1991)
+```{r data2pod0.3}
+data2 <- kpodclustr::makeData(p = 2, n = 1000, k = 3, sigma = 0.25, missing = 0.3, seed = 1991)
 Xm1991 <- data2[[2]]
 kp1991 <- kpodclustr::kpod(Xm1991,3)
 g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
@@ -287,11 +305,11 @@ g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 2, k
 g1991pod
 
 fit_kp1991[3] <- kp1991$fit
-paste0("The fit of this k-POD clustering is ", fit_kp1991[3], ".")
+ari_kp1991[3] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 ```
 
-```{r data2pod0.4, echo=FALSE}
-data2 <- kpodclustr::makeData(p = 2, n = 100, k = 5, sigma = 0.25, missing = 0.4, seed = 1991)
+```{r data2pod0.4}
+data2 <- kpodclustr::makeData(p = 2, n = 1000, k = 3, sigma = 0.25, missing = 0.4, seed = 1991)
 
 Xm1991 <- data2[[2]]
 kp1991 <- kpodclustr::kpod(Xm1991,3)
@@ -300,11 +318,11 @@ g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 2, k
 g1991pod
 
 fit_kp1991[4] <- kp1991$fit
-paste0("The fit of this k-POD clustering is ", fit_kp1991[4], ".")
+ari_kp1991[4] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 ```
 
-```{r data2pod0.5, echo=FALSE}
-data2 <- kpodclustr::makeData(p = 2, n = 100, k = 5, sigma = 0.25, missing = 0.5, seed = 1991)
+```{r data2pod0.5}
+data2 <- kpodclustr::makeData(p = 2, n = 1000, k = 3, sigma = 0.25, missing = 0.5, seed = 1991)
 
 Xm1991 <- data2[[2]]
 kp1991 <- kpodclustr::kpod(Xm1991,3)
@@ -313,18 +331,24 @@ g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 2, k
 g1991pod
 
 fit_kp1991[5] <- kp1991$fit
-paste0("The fit of this k-POD clustering is ", fit_kp1991[5], ".")
+ari_kp1991[5] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 ```
 
-```{r data2podfit, echo=FALSE}
+```{r data2metrics}
 missingpcts <- c(0.1,0.2,0.3,0.4,0.5)
-fit_list <- cbind(missingpcts,fit_kp1991)
+metrics_list <- cbind(missingpcts,fit_kp1991,ari_kp1991)
 
-g1991podfit <- ggplot(data = as.data.frame(fit_list), mapping = aes(x=missingpcts,y=fit_kp1991)) + geom_line() + geom_point() + geom_label(aes(label = round(fit_kp1991,4)), nudge_y = -0.1)
-
+g1991podfit <- ggplot(data = as.data.frame(metrics_list), mapping = aes(x=missingpcts,y=fit_kp1991)) + geom_line() + geom_point() + geom_label(aes(label = round(fit_kp1991,4)), nudge_y = -0.1)
 g1991podfit <- g1991podfit + geom_hline(mapping = aes(yintercept = fit_km1991), color = "blue")
-
 g1991podfit <- g1991podfit + labs(x = "Missingness", y = "Fit") + ylim(0,1)
 g1991podfit
+
+g1991podari <- ggplot(data = as.data.frame(metrics_list), mapping = aes(x=missingpcts,y=ari_kp1991)) + geom_line() + geom_point() + geom_label(aes(label = round(ari_kp1991,4)), nudge_y = -0.1)
+g1991podari <- g1991podari + labs(x = "Missingness", y = "ARI") + ylim(0,1)
+g1991podari
 ```
 
+Comment: Because of the inconsistent k-means clustering, we have a low fit score for the k-means clustering (blue line). We also have low ARI scores because of the drastic difference between the k-means clustering and the k-POD clusterings. 
+
+#### Summary
+does not demonstrate k-POD's quick execution time, detail see "k-POD: A Method for k-Means Clustering of Missing Data" by Jocelyn T. Chi, Eric C. Chi & Richard G. Baraniuk. 
