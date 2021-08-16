@@ -189,7 +189,15 @@ __Notice__: The scatter plots for k-POD performance will include all observation
 
 Data 1 parameters: p = 2, n = 20, k = 3, sigma = 0.25, seed = 1991
 
-Data 1 is a relatively small data set. We will be looking at k-means performance with 0% missing; k-POD performance with 10% missing; k-POD performance with 20% missing; k-POD performance with 30% missing; k-POD performance with 40% missing; k-POD performance with 50% missing, demonstrated by the following scatter plots, colored by cluster group.  
+Data 1 is a relatively small data set (20 observations). We will be looking at:
+- k-means performance with 0% missing; 
+- k-POD performance with 10% missing; 
+- k-POD performance with 20% missing; 
+- k-POD performance with 30% missing; 
+- k-POD performance with 40% missing; 
+- and k-POD performance with 50% missing.
+
+They are demonstrated by the following scatter plots, colored by cluster group. Black dots in the k-means plot represents the cluster centers.  
 
 
 ```{r data1means, out.height="50%", out.width="50%"}
@@ -276,6 +284,12 @@ g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X199
 g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k-POD with 50% missingness")
 g1991pod
 ```
+***
+
+The first line graph demonstrates the change in fit value as missingness changes. The blue line represents the fit of the k-means clustering. 
+
+The second line graph demonstrates the change in ARI value as missingness changes. 
+
 ```{r data1metrics}
 missingpcts <- c(0.1,0.2,0.3,0.4,0.5)
 metrics_list <- cbind(missingpcts,fit_kp1991,ari_kp1991)
@@ -295,6 +309,16 @@ g1991podari
 ### Data 2
 
 Data 2: p = 2, n = 1000, k = 3, sigma = 0.25, seed = 1991
+
+Data 2 is a larger data set (1000 observations) than Data 1. We will be looking at:
+- k-means performance with 0% missing; 
+- k-POD performance with 10% missing; 
+- k-POD performance with 20% missing; 
+- k-POD performance with 30% missing; 
+- k-POD performance with 40% missing; 
+- and k-POD performance with 50% missing.
+
+They are demonstrated by the following scatter plots, colored by cluster group. Black dots in the k-means plot represents the cluster centers. 
 
 ```{r data2means}
 data2 <- kpodclustr::makeData(p = 2, n = 1000, k = 3, sigma = 0.25, missing = 0.1, seed = 1991)
@@ -378,6 +402,11 @@ g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X199
 g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 2, k-POD with 50% missingness")
 g1991pod
 ```
+***
+
+The first line graph demonstrates the change in fit value as missingness changes. The blue line represents the fit of the k-means clustering. 
+
+The second line graph demonstrates the change in ARI value as missingness changes. 
 
 ```{r data2metrics}
 missingpcts <- c(0.1,0.2,0.3,0.4,0.5)
@@ -395,5 +424,44 @@ g1991podari
 
 Comment: Because of the inconsistent k-means clustering, we have a low fit score for the k-means clustering (blue line). We also have low ARI scores because of the drastic difference between the k-means clustering and the k-POD clusterings. 
 
+### Data 3
+
+Data 3: p = 2, n = 2000, k = 5, sigma = 0.25, seed = 1992
+
+```{r data3means}
+data3 <- kpodclustr::makeData(p = 2, n = 2000, k = 5, sigma = 0.5, missing = 0.1, seed = 1992)
+X1992 <- data3[[1]]
+km1992 <- kmeans(X1992,5)
+
+fit_km1992 <- 1-(sum(km1992$withinss)/km1992$totss)
+
+g1992means <- ggplot(data = as.data.frame(X1992), mapping = aes(x=X1992[,1],y=X1992[,2], color=factor(km1992$cluster))) + geom_point() + theme(legend.position = "none") 
+g1992means <- g1992means + geom_point(data = as.data.frame(km1992$centers), mapping = aes(x=km1992$centers[,1],y=km1992$centers[,2], size = 3), color = "black")
+g1992means <- g1992means + labs(x = "Feature 1", y = "Feature 2", title = "Data 3, k-means with complete data")
+g1992means 
+```
+
+```{r data3pod0.1}
+Xm1992 <- data3[[2]]
+kp1992 <- kpodclustr::kpod(Xm1992,5)
+
+fit_kp1992 <- rep(0,5)
+fit_kp1992[1] <- kp1992$fit
+
+ari_kp1992 <- rep(0,5)
+ari_kp1992[1] <- adj.rand.index(km1992$cluster, kp1992$cluster)
+g1992pod <- ggplot(data = as.data.frame(X1992), mapping = aes(x=X1992[,1],y=X1992[,2], color=factor(kp1992$cluster))) + geom_point() + theme(legend.position = "none")
+g1992pod <- g1992pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 3, k-POD with 10% missingness")
+g1992pod
+```
 ### Summary
-does not demonstrate k-POD's quick execution time, detail see "k-POD: A Method for k-Means Clustering of Missing Data" by Jocelyn T. Chi, Eric C. Chi & Richard G. Baraniuk. 
+
+***
+
+From the resulting line plots measuring the fit and ARI metrics of k-pod clustering compared to k-means clustering, we can conclude:
+
+- 
+
+These performance tests do not demonstrate k-POD's fast execution time. Details about such attribute of k-POD clustering please refer to "k-POD: A Method for k-Means Clustering of Missing Data" by Jocelyn T. Chi, Eric C. Chi & Richard G. Baraniuk. 
+
+***

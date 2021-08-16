@@ -374,3 +374,10 @@ ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color
 # ARI adjusted RandIndex assess the similarity between clustrings
 # illustrate how to measure similarity between clustrings
 # illustrate it gets harder as missing fraction increase
+
+
+## Example 3
+
+performance <- function(p, n, k, sigma, seed) {
+  
+}
