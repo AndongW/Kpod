@@ -377,7 +377,3 @@ ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color
 
 
 ## Example 3
-
-performance <- function(p, n, k, sigma, seed) {
-  
-}
