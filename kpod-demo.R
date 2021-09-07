@@ -367,7 +367,7 @@ ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color
 ### colored by k pod
 ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=as.character(kp1991$cluster))) + geom_point() + theme(legend.position = "none") 
 
-
+## notes for vignette:
 # make code k-mean on complete k-pod on missing, and compare result
 # missing fraction 10% - 90% performance comparison between k-mean k-pod
 # RandIndex 
@@ -375,5 +375,71 @@ ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color
 # illustrate how to measure similarity between clustrings
 # illustrate it gets harder as missing fraction increase
 
+################################################################################
+# Develop function with For-Loop to create k-pod visualizations more efficiently
 
-## Example 3
+
+visualize <- function(p, n, k, sigma, seed, missing_from = 0.1, missing_to = 0.5, missing_diff = 0.1, plot_flag = TRUE, title_num = 1) {
+  # Generate complete data with missing = 0, and compute fit of k means
+  data <- kpodclustr::makeData(p = p, n = n, k = k, sigma = sigma, missing = 0, seed = seed)
+  X <- data[[1]]
+  km_cl <- kmeans(X,k)
+  fit_km <- 1-(sum(km_cl$withinss)/km_cl$totss)
+
+  if (plot_flag) {
+    g_means <- ggplot(data = as.data.frame(X), mapping = aes(x=X[,1],y=X[,2], color=factor(km_cl$cluster), size = 0.3)) + geom_point() + theme(legend.position = "none") + scale_color_viridis(discrete = TRUE, option = "D")
+    g_means <- g_means + geom_point(data = as.data.frame(km_cl$centers), mapping = aes(x=km_cl$centers[,1],y=km_cl$centers[,2],size = 3), color = "darkgrey")
+    g_means <- g_means + labs(x = "Feature 1", y = "Feature 2", title = paste0("Data ", title_num, ", k-means with complete data")) + theme(plot.title = element_text(size=10))
+    plot(g_means)
+  }
+  # Generate incomplete data, compute fit of k pod, ARI, and generate scatter plots
+  counter <- 0
+  obs <- (missing_to - missing_from) / missing_diff + 1
+  fit_kp <- rep(0, obs)
+  ari_kp <- rep(0, obs)
+  
+  for (missing_pct in seq(missing_from, missing_to, by = missing_diff)){
+    counter <- counter + 1
+    
+    data <- kpodclustr::makeData(p = p, n = n, k = k, sigma = sigma, missing = missing_pct, seed = seed)
+    Xmissing <- data[[2]]
+    kp_cl <- kpodclustr::kpod(Xmissing,k)
+    
+    fit_kp[counter] <- kp_cl$fit
+    
+    ari_kp[counter] <- adj.rand.index(km_cl$cluster, kp_cl$cluster)
+
+    if (plot_flag) {
+      g_pod <- ggplot(data = as.data.frame(X), mapping = aes(x=X[,1],y=X[,2], color=factor(kp_cl$cluster))) + geom_point(size = 1) + theme(legend.position = "none") + scale_color_viridis(discrete = TRUE, option = "D")
+      g_pod <- g_pod + labs(x = "Feature 1", y = "Feature 2", title = paste0("Data ", title_num, ", k-POD with ", missing_pct, " missingness")) + theme(plot.title = element_text(size=10))
+      plot(g_pod)
+    }
+  }
+  # Generate performance analysis plots
+}
+
+# data 1
+p = 2
+n = 20
+k = 3
+sigma = 0.1
+seed = 1999
+title_num = 1
+
+# data 2
+p = 2
+n = 1000
+k = 3
+sigma = 0.1
+seed = 1999
+title_num = 2
+
+# data 3
+p = 2
+n = 1000
+k = 3
+sigma = 0.2
+seed = 1999
+title_num = 3
+
+

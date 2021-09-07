@@ -1,5 +1,7 @@
 ---
 title: "Introduction to kpodcluster"
+author: "Anthony Wang"
+date: "`r Sys.Date()`"
 output: 
   html_notebook:
     code_folding: hide
@@ -13,50 +15,59 @@ output:
     fig.height: 2
 ---
 
-***
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(kpodclustr)
+library(fossil)
+library(viridis)
+```
+
+\  
 
 # Why k-POD?
 
-***
+\  
 
 ## K-means drawback
 
-***
+\  
 
 One of the most common clustering algorithms used by data scientists today is k-means clustering. K-means clustering is an easy-to-follow and fast-to-execute algorithm to fulfill basic clustering needs with a simple function call, `kmeans()`. 
 
 However, k-means suffers one major drawback : it requires a __complete__ data set without missing entries. Realistically, in many data analysis scenarios, data sets tend to have missing entries due to errors in data collection or data cleaning. When attempting to perform k-means clustering on data sets with missing entries, one faces the following options before proceeding to the clustering:
 
-***
+\  
+
 1. eliminate the observations(rows) with missing features(columns) from the data set, then perform k-means clustering on partial data;
 
 2. impute the missing values using a certain algorithm, then perform k-means clustering on imputed data;
 
 3. contact the data collecting agency for clarification on the missing values.
 
-***
+\  
 
 ## K-POD prevails
 
-***
+\  
 
 All these options are either computationally expensive, or lacking competence in producing the ideal clustering results. The `kpodcluster` package's `kpod()` offers an simple, reliable and fast alternative to resolve the difficulties of applying k-means clustering on __incomplete__ data. 
 
 In addition to resolving the incomplete data issue, `kpod()` users have the default option to use the __k-means++__ algorithm to initialize centers, in order to address the potentially inconsistent clustering results caused by randomized initial centers in k-means clustering.
 
-***
+\  
 
 # Example Data
 
-***
+\  
 
 ## makeData()
 
-***
+\  
 
 `kpodclustr` includes a `makeData()` function that generates data sets with missing entries under user's customization. It produces a list object consisting of 3 objects:
 
-***
+\  
 
 - `Orig` : the complete data set.
 
@@ -64,7 +75,7 @@ In addition to resolving the incomplete data issue, `kpod()` users have the defa
 
 - `truth` : the cluster assignment matrix. 
 
-***
+\  
 
 For the remainder of the demonstration of `kpodcluster`, we will use the example data generated from the following code. 
 
@@ -75,7 +86,7 @@ testData <- kpodclustr::makeData(p = 2, n = 20, k = 5, sigma = 0.25, missing = 0
 
 ## Parameters example: 
 
-***
+\  
 
 - n = 20 (20 observations)
 
@@ -89,11 +100,11 @@ testData <- kpodclustr::makeData(p = 2, n = 20, k = 5, sigma = 0.25, missing = 0
 
 - seed = 1991 (random seed for reproducibility)
 
-***
+\  
 
 ## Process of `makeData()`:
 
-***
+\  
 
 1. Generate centroid matrix, `M`, with `k`*`p` random samples from standard normal distribution.
 
@@ -111,15 +122,15 @@ testData <- kpodclustr::makeData(p = 2, n = 20, k = 5, sigma = 0.25, missing = 0
 
 8. Return `X`, `X_missing`, and `assignment`.
 
-***
+\  
 
 # Usage of k-POD 
 
-***
+\  
 
 ## On example data
 
-***
+\  
 
 The __key function__ in `kpodclustr` is `kpod()`. `kpod()` delegates to the rest of the functions in `kpodclustr`. Like `kmeans()`, `kpod()` has a data set parameter, and a number-of-clusters parameter. The difference is that `kpod()` takes in a incomplete data set. The following code and output displays the usage of `kpod()` on the second object in the Example Data list, `X_missing`.
 
@@ -129,7 +140,7 @@ kpodclustr::kpod(X = testData[[2]], k = 5)
 
 ## Returned items explained
 
-***
+\  
 
 - `cluster` : The final cluster assignment matrix containing a sequence of cluster labels corresponding to each observation.
 
@@ -141,15 +152,15 @@ kpodclustr::kpod(X = testData[[2]], k = 5)
 
 - `fit_list` : A list of measurement of fit of cluster assignment throughout all iterations until clustering converges or `kpod()` reaches maximum iterations. `fit` is the last object in `fit_list`. As shown in the example output, the fit increases and approaches 1 as k-POD clustering progresses.
 
-***
+\  
 
 ## The `fit` equation
 
-***
+\  
 
 <center> $fit = 1 - ((\sum withinss) / (totss))$ </center>
 
-***
+\  
 
 As mentioned in explanation of `obj_vals`, "withinss" means "within-cluster sum of square", which is the sum of squared distance between each observation and its cluster center for each cluster. Taking the sum of "withinss" yields the sum of squared distance between each observation and its cluster center for all clusters.
 
@@ -159,27 +170,27 @@ There is also "betweenss", meaning "between-cluster sum of square" or "inter-clu
 
 A related identity: 
 
-***
+\  
 
 <center> $totss = \sum withinss + betweenss$ </center>
 
-***
+\  
 
 # k-means vs k-POD
 
-***
+\  
 
 > The k-POD method builds upon k-means clustering to provide a simple and quick alternative to clustering missing data that works even when _the missingness mechanism is unknown_, when _external information is unavailable_, and when _there is significant missingness in the data_. --- "k-POD: A Method for k-Means Clustering of Missing Data" by Jocelyn T. Chi, Eric C. Chi & Richard G. Baraniuk
 
-***
+\  
 
 ## Performance analysis
 
-***
+\  
 
 ### Metrics
 
-***
+\  
 
 In this clustering performance comparison between k-means and k-POD, we will focus on 2 metrics: fit and Adjusted Rand Index (ARI). 
 
@@ -189,11 +200,11 @@ The ARI metric is a measure of similarity between 2 data clusterings. The maximu
 
 __Before You Continue__: The scatter plots for k-POD performance will include all observations in the complete data, because the point of k-POD is to perform clustering on all the observations without eliminating the observations with missing features. However, in k-POD, those missing features will be assigned values and updated throughout iterations, which are not likely the same values as the ones in the complete data. 
 
-***
+\  
 
 ### Data 1
 
-***
+\  
 
 Data 1 parameters: p = 2, n = 20, k = 3, sigma = 0.25, seed = 1991
 
@@ -213,17 +224,19 @@ Data 1 is a relatively small data set (20 observations). We will be looking at:
 
 They are demonstrated by the following scatter plots, colored by cluster group. Black dots in the k-means plot represents the cluster centers.  
 
-***
+\  
 
 ```{r data1means, out.height="50%", out.width="50%"}
 library(ggplot2)
+library(viridis)
+
 data1 <- kpodclustr::makeData(p = 2, n = 20, k = 3, sigma = 0.25, missing = 0.1, seed = 1991)
 X1991 <- data1[[1]]
 km1991 <- kmeans(X1991,3)
 fit_km1991 <- 1-(sum(km1991$withinss)/km1991$totss)
 
-g1991means <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(km1991$cluster))) + geom_point() + theme(legend.position = "none") 
-g1991means <- g1991means + geom_point(data = as.data.frame(km1991$centers), mapping = aes(x=km1991$centers[,1],y=km1991$centers[,2],size = 3), color = "black")
+g1991means <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(km1991$cluster))) + geom_point() + theme(legend.position = "none") + scale_color_viridis(discrete = TRUE, option = "D")
+g1991means <- g1991means + geom_point(data = as.data.frame(km1991$centers), mapping = aes(x=km1991$centers[,1],y=km1991$centers[,2],size = 3), color = "darkgrey")
 g1991means <- g1991means + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k-means with complete data")
 g1991means 
 ```
@@ -239,7 +252,7 @@ library(fossil)
 ari_kp1991 <- rep(0,5)
 ari_kp1991[1] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 
-g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
+g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none") + scale_color_viridis(discrete = TRUE, option = "D")
 g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k-POD with 10% missingness")
 g1991pod
 ```
@@ -253,7 +266,7 @@ kp1991 <- kpodclustr::kpod(Xm1991,3)
 fit_kp1991[2] <- kp1991$fit
 ari_kp1991[2] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 
-g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
+g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none") + scale_color_viridis(discrete = TRUE, option = "D")
 g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k-POD with 20% missingness")
 g1991pod
 
@@ -267,7 +280,7 @@ kp1991 <- kpodclustr::kpod(Xm1991,3)
 fit_kp1991[3] <- kp1991$fit
 ari_kp1991[3] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 
-g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
+g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none") + scale_color_viridis(discrete = TRUE, option = "D")
 g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k-POD with 30% missingness")
 g1991pod
 ```
@@ -281,7 +294,7 @@ kp1991 <- kpodclustr::kpod(Xm1991,3)
 fit_kp1991[4] <- kp1991$fit
 ari_kp1991[4] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 
-g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
+g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none") + scale_color_viridis(discrete = TRUE, option = "D")
 g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k-POD with 40% missingness")
 g1991pod
 ```
@@ -295,11 +308,11 @@ kp1991 <- kpodclustr::kpod(Xm1991,3)
 fit_kp1991[5] <- kp1991$fit
 ari_kp1991[5] <- adj.rand.index(km1991$cluster, kp1991$cluster)
 
-g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none")
+g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color=factor(kp1991$cluster))) + geom_point() + theme(legend.position = "none") + scale_color_viridis(discrete = TRUE, option = "D")
 g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 1, k-POD with 50% missingness")
 g1991pod
 ```
-***
+\  
 
 The first line graph demonstrates the change in fit value as missingness changes. The blue line represents the fit of the k-means clustering. 
 
@@ -320,11 +333,11 @@ g1991podari
 
 ```
 
-***
+\  
 
 ### Data 2
 
-***
+\  
 
 Data 2 parameters: p = 2, n = 1000, k = 3, sigma = 0.25, seed = 1991
 
@@ -344,7 +357,7 @@ Data 2 is a larger data set (1000 observations) than Data 1. We will be looking 
 
 They are demonstrated by the following scatter plots, colored by cluster group. Black dots in the k-means plot represents the cluster centers. 
 
-***
+\  
 
 ```{r data2means}
 data2 <- kpodclustr::makeData(p = 2, n = 1000, k = 3, sigma = 0.25, missing = 0.1, seed = 1991)
@@ -358,11 +371,11 @@ g1991means <- g1991means + geom_point(data = as.data.frame(km1991$centers), mapp
 g1991means <- g1991means + labs(x = "Feature 1", y = "Feature 2", title = "Data 2, k-means with complete data")
 g1991means 
 ```
-***
+\  
 
 __Comment__: This example happens to demonstrate the inconsistencies in k-means clustering!
 
-***
+\  
 
 ```{r data2pod0.1}
 Xm1991 <- data2[[2]]
@@ -432,13 +445,13 @@ g1991pod <- ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X199
 g1991pod <- g1991pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 2, k-POD with 50% missingness")
 g1991pod
 ```
-***
+\  
 
 The first line graph demonstrates the change in fit value as missingness changes. The blue line represents the fit of the k-means clustering. 
 
 The second line graph demonstrates the change in ARI value as missingness changes. 
 
-***
+\  
 
 ```{r data2metrics}
 missingpcts <- c(0.1,0.2,0.3,0.4,0.5)
@@ -454,21 +467,21 @@ g1991podari <- g1991podari + labs(x = "Missingness", y = "ARI") + ylim(0,1)
 g1991podari
 ```
 
-***
+\  
 
 __Comment__: Because of the inconsistent k-means clustering, we have a low fit score for the k-means clustering (blue line). We also have low ARI scores because of the drastic difference between the k-means clustering and the k-POD clusterings. 
 
-***
+\  
 
 ### Data 3
 
-***
+\  
 
 Data 3 parameters: p = 2, n = 2000, k = 5, sigma = 0.25, seed = 1992
 
 Data 3 (2000 observations) is twice the size of Data 2 and observations are clustered into 5 clusters, instead of 3. The change sigma signifies an increase in the spread of observations around its cluster center. 
 
-***
+\  
 
 ```{r data3means}
 data3 <- kpodclustr::makeData(p = 2, n = 2000, k = 5, sigma = 0.5, missing = 0.1, seed = 1992)
@@ -549,13 +562,13 @@ g1992pod <- g1992pod + labs(x = "Feature 1", y = "Feature 2", title = "Data 3, k
 g1992pod
 ```
 
-***
+\  
 
 The first line graph demonstrates the change in fit value as missingness changes. The blue line represents the fit of the k-means clustering. 
 
 The second line graph demonstrates the change in ARI value as missingness changes. 
 
-***
+\  
 
 ```{r data3metrics}
 missingpcts <- c(0.1,0.2,0.3,0.4,0.5)
@@ -571,11 +584,11 @@ g1992podari <- g1992podari + labs(x = "Missingness", y = "ARI") + ylim(0,1)
 g1992podari
 ```
 
-***
+\  
 
 ### Plots explained
 
-***
+\  
 
 As previously mentioned, the scatter plots for k-POD performance will include all observations in the complete data like the plots for k-means, because the point of k-POD is to perform clustering on all the observations including those with missing features. However, in k-POD, those missing features will be assigned values and updated throughout iterations, which are not likely the same values as the ones in the complete data. This explains why even though the k-POD clustering scatter plots may look worse than the k-means scatter plot, but k-POD tend to have better values for the fit metric. 
 
@@ -583,4 +596,4 @@ From the generated line plots measuring the fit and ARI metrics of k-pod cluster
 
 These performance analysis do not demonstrate k-POD's fast execution time. Detailed discussion about attributes of k-POD clustering please refer to "k-POD: A Method for k-Means Clustering of Missing Data" by Jocelyn T. Chi, Eric C. Chi & Richard G. Baraniuk. 
 
-***
+\  
