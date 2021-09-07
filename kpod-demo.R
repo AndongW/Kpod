@@ -379,14 +379,14 @@ ggplot(data = as.data.frame(X1991), mapping = aes(x=X1991[,1],y=X1991[,2], color
 # Develop function with For-Loop to create k-pod visualizations more efficiently
 
 
-visualize <- function(p, n, k, sigma, seed, missing_from = 0.1, missing_to = 0.5, missing_diff = 0.1, plot_flag = TRUE, title_num = 1) {
+visualize <- function(p, n, k, sigma, seed, missing_from = 0.1, missing_to = 0.5, missing_diff = 0.1, scatter_flag = TRUE, title_num = 1) {
   # Generate complete data with missing = 0, and compute fit of k means
   data <- kpodclustr::makeData(p = p, n = n, k = k, sigma = sigma, missing = 0, seed = seed)
   X <- data[[1]]
   km_cl <- kmeans(X,k)
   fit_km <- 1-(sum(km_cl$withinss)/km_cl$totss)
 
-  if (plot_flag) {
+  if (scatter_flag) {
     g_means <- ggplot(data = as.data.frame(X), mapping = aes(x=X[,1],y=X[,2], color=factor(km_cl$cluster), size = 0.3)) + geom_point() + theme(legend.position = "none") + scale_color_viridis(discrete = TRUE, option = "D")
     g_means <- g_means + geom_point(data = as.data.frame(km_cl$centers), mapping = aes(x=km_cl$centers[,1],y=km_cl$centers[,2],size = 3), color = "darkgrey")
     g_means <- g_means + labs(x = "Feature 1", y = "Feature 2", title = paste0("Data ", title_num, ", k-means with complete data")) + theme(plot.title = element_text(size=10))
@@ -409,14 +409,28 @@ visualize <- function(p, n, k, sigma, seed, missing_from = 0.1, missing_to = 0.5
     
     ari_kp[counter] <- adj.rand.index(km_cl$cluster, kp_cl$cluster)
 
-    if (plot_flag) {
+    if (scatter_flag) {
       g_pod <- ggplot(data = as.data.frame(X), mapping = aes(x=X[,1],y=X[,2], color=factor(kp_cl$cluster))) + geom_point(size = 1) + theme(legend.position = "none") + scale_color_viridis(discrete = TRUE, option = "D")
       g_pod <- g_pod + labs(x = "Feature 1", y = "Feature 2", title = paste0("Data ", title_num, ", k-POD with ", missing_pct, " missingness")) + theme(plot.title = element_text(size=10))
       plot(g_pod)
     }
   }
-  # Generate performance analysis plots
+  # Generate performance analysis metric plots
+  missingpcts <- seq(missing_from, missing_to, by = missing_diff)
+  metrics <- cbind(missingpcts,fit_kp,ari_kp)
+  
+  g_podfit <- ggplot(data = as.data.frame(metrics), mapping = aes(x=missingpcts,y=fit_kp)) + geom_line() + geom_point() + geom_label(aes(label = round(fit_kp,4)), nudge_y = -0.1)
+  g_podfit <- g_podfit + geom_hline(mapping = aes(yintercept = fit_km), color = "blue")
+  g_podfit <- g_podfit + labs(x = "Missingness", y = "Fit") + ylim(0,1)
+  plot(g_podfit)
+  
+  g_podari <- ggplot(data = as.data.frame(metrics), mapping = aes(x=missingpcts,y=ari_kp)) + geom_line() + geom_point() + geom_label(aes(label = round(ari_kp,4)), nudge_y = -0.1)
+  g_podari <- g_podari + labs(x = "Missingness", y = "ARI") + ylim(0,1)
+  plot(g_podari)
 }
+
+# Run this statement:
+visualize(p,n,k,sigma, seed, missing_from,missing_to,missing_diff,plot_flag,title_num)
 
 # data 1
 p = 2
@@ -424,6 +438,10 @@ n = 20
 k = 3
 sigma = 0.1
 seed = 1999
+missing_from = 0.1
+missing_to = 0.5
+missing_diff = 0.1
+plot_flag = TRUE
 title_num = 1
 
 # data 2
