@@ -211,7 +211,7 @@ visualize <- function(p, n, k, sigma, seed, missing_from = 0.1, missing_to = 0.5
   
   for (missing_pct in seq(missing_from, missing_to, by = missing_diff)){
     counter <- counter + 1
-    
+    print(paste0("Producing Scatter Plot Number ", counter))
     data <- kpodclustr::makeData(p = p, n = n, k = k, sigma = sigma, missing = missing_pct, seed = seed)
     Xmissing <- data[[2]]
     kp_cl <- kpodclustr::kpod(Xmissing,k)
@@ -278,7 +278,7 @@ Data 1 is a relatively small data set (20 observations). We will be looking at:
 
 They are demonstrated by the following scatter plots, colored by cluster group. Large dark grey dots in the k-means plot represents the cluster centers.  
 
-```{r data1viz}
+```{r data1viz, echo=FALSE,results='hide',fig.keep='all'}
 p = 2
 n = 20
 k = 3
@@ -313,7 +313,7 @@ Data 2 is a larger data set (1000 observations) than Data 1. We will be looking 
 
 They are demonstrated by the following scatter plots, colored by cluster group. Black dots in the k-means plot represents the cluster centers. 
 
-```{r data2viz}
+```{r data2viz, echo=FALSE,results='hide',fig.keep='all'}
 p = 2
 n = 1000
 k = 3
@@ -334,7 +334,23 @@ Data 3 parameters: p = 2, n = 2000, k = 5, sigma = 0.25, seed = 1992
 
 Data 3 (2000 observations) is twice the size of Data 2 and observations are clustered into 5 clusters, instead of 3. The change in sigma signifies an increase in the spread of observations around its cluster center. 
 
-```{r data3viz}
+We will be looking at:
+
+- k-means performance with 0% missing; 
+
+- k-POD performance with 10% missing; 
+
+- k-POD performance with 20% missing; 
+
+- k-POD performance with 30% missing; 
+
+- k-POD performance with 40% missing; 
+
+- and k-POD performance with 50% missing.
+
+They are demonstrated by the following scatter plots, colored by cluster group. Black dots in the k-means plot represents the cluster centers. 
+
+```{r data3viz, echo=FALSE,results='hide',fig.keep='all'}
 p = 2
 n = 2000
 k = 5
